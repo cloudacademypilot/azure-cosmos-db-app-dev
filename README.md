@@ -4,4 +4,3 @@ The objective of this lab is to provide participants solid understanding and exp
 1. Cosmos DB Account creation,  partitioning, loading data and resource governance for building and configuring scalable applications agnostic of a specific Cosmos DB API. 
 2. Write efficient Azure Cosmos DB SQL queries, create stored procedures, and apply appropriate index policies. 
 3. Create applications using Cosmos DB SQL API and Azure Cosmos DB .NET SDK for SQL API. 
-4. Implement data models, load data, distribute data

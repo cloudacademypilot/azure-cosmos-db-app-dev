@@ -43,7 +43,7 @@ You will start by using the .NET SDK to create containers to use in this and fol
 
 ### Create a .NET Core Project
 
-1. Create **Lab01** folder that will be used to contain the content of your .NET Core project.
+1. Open **File explorer**, navigate to **_C:\Users\cosmosLabUser\Desktop_** location and create **Lab01** folder that will be used to contain the content of your .NET Core project.
     
 1. In the **Lab01** folder, right-click the folder and select the **Open with Code** menu option.
 
@@ -62,7 +62,14 @@ You will start by using the .NET SDK to create containers to use in this and fol
     dotnet new console
     ```
 
-    > This command will create a new .NET Core project. The project will be a **console** project and the project.
+    > This command will create a new .NET Core project. The project will be a **console** project and it creates Program.cs file.
+    
+    > You will see the below code in Program.cs and make sure you delete the existing below lines .
+    
+    ```sh
+       //See https://aka.ms/new-console-template for more information 
+       Console.WriteLine("Hello, World!"); 
+    ```
 
 1. Visual Studio Code will most likely prompt you to install various extensions related to **.NET Core** or **Azure Cosmos DB** development. None of these extensions are required to complete the labs.
 
@@ -115,12 +122,20 @@ The CosmosClient class is the main "entry point" to using the Core (SQL) API in 
     using Microsoft.Azure.Cosmos;
     ```
 
-1. Within the `Program` class, add the following lines of code to create variables for your connection information and Cosmos client:
+1. Within the `Program` class, add the following lines of code to create variables for Cosmos DB Connection, Cosmos Client and main() method as given below.
 
     ```csharp
-    private static readonly string _endpointUri = "";
-    private static readonly string _primaryKey = "";
-    private static CosmosClient _client = new CosmosClient(_endpointUri, _primaryKey);
+    public class Program
+    {
+        private static readonly string _endpointUri = "<your uri>";
+        private static readonly string _primaryKey = "<your key>";
+        private static CosmosClient _client = new CosmosClient(_endpointUri, _primaryKey);
+
+        public static async Task Main(string[] args)
+        {
+
+        }
+    }
     ```
 
 1. For the `_endpointUri` variable, replace the placeholder value with the **URI** value from your Azure Cosmos DB account
@@ -140,34 +155,6 @@ The CosmosClient class is the main "entry point" to using the Core (SQL) API in 
     ```
 
     > Keep the **URI** and **PRIMARY KEY** values recorded, you will use them again later in this lab.
-
-1. Locate the `Main` method and replace it with the following *async* `Main` method:
-
-    ```csharp
-    public class Program
-    {
-        public static async Task Main(string[] args)
-        {
-
-        }
-    }
-    ```
-
-1. Your `Program` class definition should now look like this:
-
-    ```csharp
-    public class Program
-    {
-        private static readonly string _endpointUri = "<your uri>";
-        private static readonly string _primaryKey = "<your key>";
-        private static CosmosClient _client = new CosmosClient(_endpointUri, _primaryKey);
-
-        public static async Task Main(string[] args)
-        {
-
-        }
-    }
-    ```
 
     > We will now execute a build of the application to make sure our code compiles successfully.
 
@@ -223,7 +210,7 @@ The CosmosClient class is the main "entry point" to using the Core (SQL) API in 
 
 ### Create a Partitioned Container using the SDK
 
-To create a container, you must specify a name and a partition key path. A partition key is a logical hint for distributing data onto a scaled out underlying set of physical partitions and for efficiently routing queries to the appropriate underlying partition. To learn more, refer to [docs.microsoft.com/azure/cosmos-db/partition-data](./assets/https://docs.microsoft.com/en-us/azure/cosmos-db/partition-data).
+To create a container, you must specify a name and a partition key path. A partition key is a logical hint for distributing data onto a scaled out underlying set of physical partitions and for efficiently routing queries to the appropriate underlying partition. To learn more, refer to [docs.microsoft.com/azure/cosmos-db/partition-data](https://docs.microsoft.com/en-us/azure/cosmos-db/partition-data).
 
 1. Beneath the `InitializeDatabase` method, create the following new method:
 
@@ -625,5 +612,3 @@ private static async Task LoadMapViews(Container container)
 1. Observe the output of the console application. You should see a list of item ids associated with new items that are being created. You have now placed three different types of documents (PurchaseFoodOrBeverage, WatchLiveTelevisionChannel, ViewMap) into the `EntertainmentContainer` showing how Cosmos DB is schema-less.
 
 1. Close the folder in Visual Studio Code
-
-
