@@ -48,7 +48,6 @@ You will now create a database and container within your Azure Cosmos DB account
 
 You will use **Azure Data Factory (ADF)** to import the JSON array stored in the **nutrition.json** file from Azure Blob Storage.
 
-You do not need to do Steps 1-4 in this section and can proceed to Step 4 by opening your Data Factory (named importNutritionData with a random number suffix)if you are completing the lab through Microsoft Hands-on Labs or ran the setup script, you can use the pre-created Data Factory within your resource group.
 
 1. On the left side of the portal, select the **Resource groups** link.
 
@@ -56,34 +55,36 @@ You do not need to do Steps 1-4 in this section and can proceed to Step 4 by ope
 
     ![Resource groups link is highlighted](./assets/03-resource_groups.jpg "Select Resource Groups")
 
-1. In the **Resource groups** blade, locate and select the **cosmoslabs** resource group.
+1. In the **Resource groups** blade, locate and select the Cloud Academy resource group containing the lab resources.
 
-1. If you see a Data Factory resource, you can skip to step 4, otherwise select **Add** to add a new resource
+1. Amoung the resources you will find a storage account with name **cosmoslabstrgacct** and a data factory with name **cosmosLabAdf** with unique random string appended.
 
-    ![A data factory resource is highlighted](./assets/03-adf-isntance.png "Review if you have data factory already")
+    ![Cosmos Lab Resources](./assets/03-storageacct-adf.jpg "Cosmos Lab Resources")
 
-    ![Select Add in the nav bar](./assets/03-add_adf.jpg "Add a new resource")
+1. Open the storage account and click on containers link on the left navigation pane. You will find the container **nutritiondata**
+    ![Cosmos Lab storage account](./assets/03-storageacct-container.jpg "Cosmos Lab storage account")
 
-   - Search for **Data Factory** and select it. 
-   - Create a new **Data Factory**. You should name this data factory **importnutritiondata** with a unique number appended and select the relevant Azure subscription. You should ensure your existing **cosmoslabs** resource group is selected as well as a Version **V2**. 
-   - Select **East US** as the region. Do not select **Enable GIT** (this may be checked by default). 
-   - Select **Create**.
+1. Click on the container name to navigate to the container detail screen. On the top you will see an upload button.
+    ![Cosmos Lab storage account](./assets/03-storageacct-container-upload.jpg "Cosmos Lab storage account upload")
 
-        ![The new data factory dialog is displayed](./assets/03-adf_selections.jpg "Add a new Data Factory resource")
+1. Click on the upload button, this will open up a form to upload blob file on the right hand side. Click on the **select file** button and nagivate to ***C:->Labs->setup folder*** on VM and select **NutritionData** json file using the file browser. Use the upload button to upload the file to the container  
+    ![Cosmos Lab storage account](./assets/03-storageacct-file-upload.jpg "Cosmos Lab storage account file upload")
 
-1. After creation, open your newly created Data Factory. Select **Author & Monitor** and you will launch ADF.
+1. After file is uploaded, click on link **shared access tokens** to open the dialog for generating SAS token. Click on 
+button **Generate SAS token and URL** to generate container SAS. Copy the **Blob SAS URL**. 
+     ![Cosmos Lab storage account get SAS](./assets/03-storageacct-get-sas.jpg "Cosmos Lab storage account get SAS")
+   
+1. Open the Data Factory. Select **Open Azure Data Factory Studio** to launch ADF studio.
 
-    ![The overview blade is displayed for ADF](./assets/03-adf_author&monitor.jpg "Select Author and Monitor link")
+    ![The overview blade is displayed for ADF](./assets/03-adf-open.jpg "Select Author and Monitor link")
 
-1. Select **Copy Data**.
+1. Click on  **Ingest**. This open the copy data tool
 
-   - We will be using ADF for a one-time copy of data from a source JSON file on Azure Blob Storage to a database in Cosmos DB’s SQL API. ADF can also be used for more frequent data transfers from Cosmos DB to other data stores.
+    ![The main workspace page is displayed for ADF](./assets/03-adf-ingest.jpg "Lauch copy data tool")
 
-    ![The main workspace page is displayed for ADF](./assets/03-adf_copydata.jpg "Select the Copy Data activity")
+   - We will be using ADF for a one-time copy of data from a source JSON file on Azure Blob Storage to a database in Cosmos DB’s SQL API. ADF can also be used for more frequent data transfers from Cosmos DB to other data stores.Select to **Run once now**, then select **Next**
 
-1. Edit basic properties for this data copy. You should name the task **ImportNutrition** and select to **Run once now**, then select **Next**
-
-   ![The copy data activity properties dialog is displayed](./assets/03-adf_properties.jpg "Enter a task name and the schedule")
+    ![Built in copy task is displayed](./assets/03-adf-built-in-copy.jpg "Select built in copy activity")
 
 1. **Create a new connection** and select **Azure Blob Storage**. We will import data from a json file on Azure Blob Storage. In addition to Blob Storage, you can use ADF to migrate from a wide variety of sources. We will not cover migration from these sources in this tutorial.
 
@@ -91,9 +92,9 @@ You do not need to do Steps 1-4 in this section and can proceed to Step 4 by ope
 
     ![Azure Blog Storage is highlighted](./assets/03-adf_blob2.jpg "Select the Azure Blob Storage connection type")
 
-1. Name the source **NutritionJson** and select **SAS URI** as the Authentication method. Please use the following SAS URI for read-only access to this Blob Storage container:
+1. Name the source **NutritionJson** and select **SAS URI** as the Authentication method. Please use the SAS URI generated from the previous step for read-only access to the Blob Storage container:
 
-     `https://cosmoslabsstorageaccount.blob.core.windows.net/nutrition-data?si=container-list-read-policy&spr=https&sv=2021-06-08&sr=c&sig=jGrmrokYikbgbuW9we2am%2BwAq%2BC%2BxfZcPYswOeSQpAU%3D`
+     `https://cosmoslabstrgacctmyx5zl.blob.core.windows.net/nutritiondata?sp=r&st=2022-10-17T14:41:58Z&se=2022-10-17T22:41:58Z&spr=https&sv=2021-06-08&sr=c&sig=IZBcvj4HjjIO4K0lJ4ROMprH6rypsWZHO64bCPHzCoE%3D`
 
     ![The New linked service dialog is displayed](./assets/03-adf_connecttoblob.jpg "Enter the SAS url in the dialog")
 
