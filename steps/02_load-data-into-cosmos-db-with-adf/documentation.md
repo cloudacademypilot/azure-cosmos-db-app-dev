@@ -68,14 +68,12 @@ You will use **Azure Data Factory (ADF)** to import the JSON array stored in the
     ![Cosmos Lab storage account](./assets/03-storageacct-container-upload.jpg "Cosmos Lab storage account upload")
 
 1. Click on the upload button, this will open up a form to upload blob file on the right hand side. Click on the **select file** button and nagivate to ***C:->Labs->setup folder*** on VM and select **NutritionData** json file using the file browser. Use the upload button to upload the file to the container  
-    ![Cosmos Lab storage account](./assets/03-storageacct-file-upload.jpg "Cosmos Lab storage account file upload")
+    ![Cosmos Lab storage account](./assets/03-storageacct-file-upload.jpg "Cosmos Lab storage account file upload")  
+
     
-1. Right click on nutrition contatainer select **Generate SAS** and select Permissions dropdown check **List** and **reader**, then Click on **Generate SAS token and URL**
-    ![Cosmos Lab storage generate SAS](./assets/02_SASTokens.jpg "Cosmos Lab storage Generate SAS")
-    
-1. After file is uploaded, click on link **shared access tokens** to open the dialog for generating SAS token. Click on 
-button **Generate SAS token and URL** to generate container SAS. Copy the **Blob SAS URL**. 
-     ![Cosmos Lab storage account get SAS](./assets/03-storageacct-get-sas.jpg "Cosmos Lab storage account get SAS")
+1. After file is uploaded, click on link **shared access tokens** to open the dialog for generating SAS token and select Permissions dropdown check **List** and **reader**,  Click on button **Generate SAS token and URL** to generate container SAS. Copy the **Blob SAS URL**. 
+
+     ![Cosmos Lab storage account get SAS](./assets/02_SASToken.jpg "Cosmos Lab storage account get SAS")
    
 1. Open the Data Factory. Select **Open Azure Data Factory Studio** to launch ADF studio.
 
