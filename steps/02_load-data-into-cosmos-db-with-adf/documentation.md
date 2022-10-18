@@ -71,7 +71,7 @@ You will use **Azure Data Factory (ADF)** to import the JSON array stored in the
     ![Cosmos Lab storage account](./assets/03-storageacct-file-upload.jpg "Cosmos Lab storage account file upload")
     
 1. Right click on nutrition contatainer select **Generate SAS** and select Permissions dropdown check List and reader, then Click Generate SAS token and URL
-    ![Cosmos Lab storage generate SAS](./assets/02_SASToken.jpg "Cosmos Lab storage Generate SAS")
+    ![Cosmos Lab storage generate SAS](./assets/02_SASTokens.jpg "Cosmos Lab storage Generate SAS")
     
 1. After file is uploaded, click on link **shared access tokens** to open the dialog for generating SAS token. Click on 
 button **Generate SAS token and URL** to generate container SAS. Copy the **Blob SAS URL**. 
