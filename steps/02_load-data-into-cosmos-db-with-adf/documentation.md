@@ -93,22 +93,21 @@ button **Generate SAS token and URL** to generate container SAS. Copy the **Blob
 
     ![Create new connection link is highlighted](./assets/02_SourceType.jpg "Create a new connection")
     
-
 1. Name the source **NutritionJson** and select **SAS URI** as the Authentication method. Please use the SAS URI generated from the previous step for read-only access to the Blob Storage container:
 
      `https://cosmoslabstrgacctmyx5zl.blob.core.windows.net/nutritiondata?sp=r&st=2022-10-17T14:41:58Z&se=2022-10-17T22:41:58Z&spr=https&sv=2021-06-08&sr=c&sig=IZBcvj4HjjIO4K0lJ4ROMprH6rypsWZHO64bCPHzCoE%3D`
 
-    ![The New linked service dialog is displayed](./assets/02_linkedservice.jpg "Enter the SAS url in the dialog")
+    ![The New linked service dialog is displayed](./assets/02_Connectionstring.jpg "Enter the SAS url in the dialog")
 
 1. Select **Create**
 1. Select **Next**
 1. In the **File or Folder** textbox, enter the folder name as ``nutirion-data`` and then click on **Browse** to select the **nutrition-data** folder. Finally select **NutritionData.json** file.
 
-    ![The nutritiiondata folder is displayed](./assets/02_Browse.jpg "Select the NutritionData.json file")
+    ![The nutritiiondata folder is displayed](./assets/02_Selectnutrition.jpg "Select the NutritionData.json file")
 
 1. Un-check **Copy file recursively** or **Binary Copy** if they are checked. Also ensure that other fields are empty. Click **Next**
 
-    ![The input file or folder dialog is displayed](./assets/02_Path.jpg "Ensure all other fields are empty, select next")
+    ![The input file or folder dialog is displayed](./assets/02-uncheck.jpg "Ensure all other fields are empty, select next")
 
 1. Select the file format as **JSON format**. Then select **Next**.
 
