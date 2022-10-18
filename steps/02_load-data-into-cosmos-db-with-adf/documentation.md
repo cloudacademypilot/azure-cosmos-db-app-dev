@@ -91,7 +91,7 @@ button **Generate SAS token and URL** to generate container SAS. Copy the **Blob
 
 1. **Create a new connection** and select **Azure Blob Storage**. We will import data from a json file on Azure Blob Storage. In addition to Blob Storage, you can use ADF to migrate from a wide variety of sources. We will not cover migration from these sources in this tutorial.
 
-    ![Create new connection link is highlighted](./assets/02_Source.jpg "Create a new connection")
+    ![Create new connection link is highlighted](./assets/02_SourceType.jpg "Create a new connection")
     
 
 1. Name the source **NutritionJson** and select **SAS URI** as the Authentication method. Please use the SAS URI generated from the previous step for read-only access to the Blob Storage container:
