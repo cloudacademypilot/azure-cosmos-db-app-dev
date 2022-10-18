@@ -91,25 +91,24 @@ button **Generate SAS token and URL** to generate container SAS. Copy the **Blob
 
 1. **Create a new connection** and select **Azure Blob Storage**. We will import data from a json file on Azure Blob Storage. In addition to Blob Storage, you can use ADF to migrate from a wide variety of sources. We will not cover migration from these sources in this tutorial.
 
-    ![Create new connection link is highlighted](./assets/03-adf_blob.jpg "Create a new connection")
-
-    ![Azure Blog Storage is highlighted](./assets/03-adf_blob2.jpg "Select the Azure Blob Storage connection type")
+    ![Create new connection link is highlighted](./assets/02_Source.jpg "Create a new connection")
+    
 
 1. Name the source **NutritionJson** and select **SAS URI** as the Authentication method. Please use the SAS URI generated from the previous step for read-only access to the Blob Storage container:
 
      `https://cosmoslabstrgacctmyx5zl.blob.core.windows.net/nutritiondata?sp=r&st=2022-10-17T14:41:58Z&se=2022-10-17T22:41:58Z&spr=https&sv=2021-06-08&sr=c&sig=IZBcvj4HjjIO4K0lJ4ROMprH6rypsWZHO64bCPHzCoE%3D`
 
-    ![The New linked service dialog is displayed](./assets/03-adf_connecttoblob.jpg "Enter the SAS url in the dialog")
+    ![The New linked service dialog is displayed](./assets/02_linkedservice.jpg "Enter the SAS url in the dialog")
 
 1. Select **Create**
 1. Select **Next**
 1. In the **File or Folder** textbox, enter the folder name as ``nutirion-data`` and then click on **Browse** to select the **nutrition-data** folder. Finally select **NutritionData.json** file.
 
-    ![The nutritiiondata folder is displayed](./assets/03-adf_choosestudents.jpg "Select the NutritionData.json file")
+    ![The nutritiiondata folder is displayed](./assets/02_Browse.jpg "Select the NutritionData.json file")
 
 1. Un-check **Copy file recursively** or **Binary Copy** if they are checked. Also ensure that other fields are empty. Click **Next**
 
-    ![The input file or folder dialog is displayed](./assets/03-adf_source_next.jpg "Ensure all other fields are empty, select next")
+    ![The input file or folder dialog is displayed](./assets/02_Path.jpg "Ensure all other fields are empty, select next")
 
 1. Select the file format as **JSON format**. Then select **Next**.
 
@@ -119,7 +118,7 @@ button **Generate SAS token and URL** to generate container SAS. Copy the **Blob
 
 1. For the **Destination data store** add the Cosmos DB target data store by selecting **Create new connection** and selecting **Azure Cosmos DB (SQL API)**.
 
-    !["The New Linked Service dialog is displayed"](./assets/03-adf_selecttarget.jpg "Select the Azure Cosmos DB service type")
+    !["The New Linked Service dialog is displayed"](./assets/02_Destination.jpg "Select the Azure Cosmos DB service type")
 
 1. Name the linked service **targetcosmosdb** and select your Azure subscription and Cosmos DB account. You should also select the Cosmos DB **ImportDatabase** that you created earlier.
 
@@ -131,11 +130,11 @@ button **Generate SAS token and URL** to generate container SAS. Copy the **Blob
 
 1. Select your **FoodCollection** container from the drop-down menu. You will map your Blob storage file to the correct Cosmos DB container. Select **Next** to continue.
 
-    !["The table mapping dialog is displayed"](./assets/03-adf_correcttable.jpg "Select the FoodCollection container")
+    !["The table mapping dialog is displayed"](./assets/02_FoodCollection.jpg "Select the FoodCollection container")
 
 1. There is no need to change any `Settings`. Select **next**.
 
-    !["The settings dialog is displayed"](./assets/03-adf_settings.jpg "Review the dialog, select next")
+    !["The settings dialog is displayed"](./assets/02_Setting.jpg "Review the dialog, select next")
 
 1. Select **Next** to begin deployment After deployment is complete, select **Monitor**.
 
