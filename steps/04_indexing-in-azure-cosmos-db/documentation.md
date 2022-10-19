@@ -321,9 +321,6 @@ ii. For the `_primaryKey` variable, replace the placeholder value with the **PRI
     
    ```
 
-  > Keep the **URI** and **PRIMARY KEY** values recorded, you will use them again later in this lab.
-
-
 ### Create a record in the container 
 
 1. To create a record type object, copy paste the below code inside Program class and outside the main method.
@@ -449,8 +446,82 @@ namespace _04_IndexingPolicy
    ```sh
    dotnet run
    ```
+5. You will see the RU value created.
+
+6. Navigate to the **FoodCollection** in the Azure Portal.
+
+7. Select the **Scale & Settings** link under **_FoodCollection_** container.
+
+8. In the **Indexing Policy** section, replace the existing json file with default indexing policy as given below.
+  
+  ```json
+   
+   {
+    "indexingMode": "consistent",
+    "automatic": true,
+    "includedPaths": [
+        {
+            "path": "/*"
+        }
+    ],
+    "excludedPaths": [
+        {
+            "path": "/\"_etag\"/?"
+        }
+    ]
+}
+  
+  ```
+9. Now navigate to dotnet code , change the id of your choice under create new item. 
+   ![ID value](./assets/04-id_change.jpg "replace id")
 
 
+10.Run the dotnet code to see the updated RU value.
+
+   ``sh
+     dotnet run
+   ``
+   
+   ![default indexing RU value](./assets/04-default_index_RU.jpg "RU VALUES WITH DEFAULT RU ")
+   
+11.Again navigate to **Scale & Settings** link under **_FoodCollection_** container.
+
+12.In the **Indexing Policy** section, replace the existing json file with indexing policy as given below.
+
+   ```json
+   
+{
+    "indexingMode": "consistent",
+    "automatic": true,
+    "includedPaths": [
+        {
+            "path": "/manufacturerName/*"
+        },
+        {
+            "path": "/foodGroup/*"
+        }
+    ],
+    "excludedPaths": [
+        {
+            "path": "/*"
+        }
+    ]
+}
+
+  ```
+ 
+13.Now navigate to dotnet code , change the id of your choice under create new item. 
+   ![ID value](./assets/04-id_change.jpg "replace id")
+   
+14.Run the dotnet code to see the updated RU value. 
+  
+  ``sh
+     dotnet run
+   ``
+  ![default indexing RU value](./assets/04-with_index_RU.jpg "RU VALUES WITH DEFAULT RU ")
+
+15.You will be able to see the changes in RU value with or without indexing.
+    
 
 ### Edit the indexing policy by excluding paths
 
