@@ -122,9 +122,9 @@ You will use **Azure Data Factory (ADF)** to import the JSON array stored in the
 
     !["The table mapping dialog is displayed"](./assets/02_FoodCollection.jpg "Select the FoodCollection container")
 
-1. There is no need to change any `Settings`. Select **next**.
+1. You can give any name for Task name or there is no need to change any `Settings`. Select **next**.
 
-    !["The settings dialog is displayed"](./assets/02_Setting.jpg "Review the dialog, select next")
+    !["The settings dialog is displayed"](./assets/02-cosmos_task_Name.jpg "Review the dialog, select next")
 
 1. Select **Next** to begin deployment After deployment is complete, select **Monitor**.
 
