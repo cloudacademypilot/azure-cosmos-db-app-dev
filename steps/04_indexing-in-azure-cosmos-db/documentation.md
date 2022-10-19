@@ -465,11 +465,8 @@ namespace _04_IndexingPolicy
 }
   
   ```
-7. Now navigate to dotnet code , change the id of your choice under create new item. 
-   ![ID value](./assets/04-id_change1.jpg "replace id")
 
-
-8. Save the code and run to see the updated RU value.
+7. Save the dotnet code and run to see the updated RU value.
 
    ```sh
    dotnet run
@@ -477,11 +474,11 @@ namespace _04_IndexingPolicy
    
    ![default indexing RU value](./assets/04-default_index_RU.jpg "RU VALUES WITH DEFAULT RU ")
    
-9. Navigate to the **FoodCollection** in the Azure Portal.
-   
-10.Select the **Scale & Settings** link under **_FoodCollection_** container.
+8. Navigate to the **FoodCollection** in the Azure Portal.
 
-11.In the **Indexing Policy** section, replace the existing json file with indexing policy as given below.
+9. Select the **Scale & Settings** link under **_FoodCollection_** container.
+
+10. In the **Indexing Policy** section, replace the existing json file with indexing policy as given below.
 
    ```json
    
@@ -505,10 +502,10 @@ namespace _04_IndexingPolicy
 
   ```
  
-12.Now navigate to dotnet code , change the id of your choice under create new item. 
+11.Now navigate to dotnet code , change the id of your choice under create new item. 
    ![ID value](./assets/04-id_change2.jpg "replace id")
    
-13.Save the code and run to see the updated RU value.
+12.Save the code and run to see the updated RU value.
   
    ```sh
    dotnet run
@@ -516,7 +513,7 @@ namespace _04_IndexingPolicy
   
   ![default indexing RU value](./assets/04-with_index_RU.jpg "RU VALUES WITH DEFAULT RU ")
 
-14.You will be able to see the changes in RU value with or without indexing.
+13.You will be able to see the changes in RU value with or without indexing.
     
 
 ### Edit the indexing policy by excluding paths
