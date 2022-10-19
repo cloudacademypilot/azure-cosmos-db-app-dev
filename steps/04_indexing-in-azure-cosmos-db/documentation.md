@@ -439,7 +439,7 @@ namespace _04_IndexingPolicy
 
    ```
    
-3. Save all of your open editor tabs.
+3. Save the code in the open editor tab.
 
 4. In the open terminal pane, enter and execute the following command:
 
