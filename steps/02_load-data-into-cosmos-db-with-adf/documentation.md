@@ -111,14 +111,17 @@ You will use **Azure Data Factory (ADF)** to import the JSON array stored in the
 
 1. You have now successfully connected the Blob Storage container with the nutrition.json file as the source.
 
-1. Under **Destination data store** , select destination type as  **Azure Cosmos DB (SQL API)**. For Connection, click on **Create new connection**.
+1. Under **Destination data store** , select destination type as  **Azure Cosmos DB (SQL API)**.
 
-    !["The New Linked Service dialog is displayed"](./assets/02_Destination.jpg "Select the Azure Cosmos DB service type")
+    !["The New Linked Services dialog is displayed"](./assets/02_Destination-Sqlapi.jpg "Select the Azure Cosmos DB service type")
 
+1. For Connection, click on **Create new connection**, Name the linked service targetcosmosdb and select your Azure subscription and Cosmos DB account. You should also select the Cosmos DB NutritionDatabase that you created earlier.
+
+    !["The New Linked Service dialog is displayed"](./assets/02_Destination_sub.jpg "Select the Azure Cosmos DB linked service type")
 
 1. Select your **FoodCollection** container from the drop-down menu. You will map your Blob storage file to the correct Cosmos DB container. Select **Next** to continue.
 
-    !["The table mapping dialog is displayed"](./assets/02_FoodCollection.jpg "Select the FoodCollection container")
+    !["The table mapping dialog is displayed"](./assets/02_Destination_foodcollection.jpg "Select the FoodCollection container")
 
 1. You can give any name for Task name or there is no need to change any `Settings`. Select **next**.
 
