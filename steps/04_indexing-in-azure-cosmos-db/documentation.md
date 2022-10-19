@@ -473,14 +473,14 @@ namespace _04_IndexingPolicy
   
   ```
 9. Now navigate to dotnet code , change the id of your choice under create new item. 
-   ![ID value](./assets/04-id_change.jpg "replace id")
+   ![ID value](./assets/04-id_change1.jpg "replace id")
 
 
-10.Run the dotnet code to see the updated RU value.
+10.Save the code and run to see the updated RU value.
 
-   ``sh
-     dotnet run
-   ``
+   ```sh
+   dotnet run
+   ```
    
    ![default indexing RU value](./assets/04-default_index_RU.jpg "RU VALUES WITH DEFAULT RU ")
    
@@ -511,13 +511,14 @@ namespace _04_IndexingPolicy
   ```
  
 13.Now navigate to dotnet code , change the id of your choice under create new item. 
-   ![ID value](./assets/04-id_change.jpg "replace id")
+   ![ID value](./assets/04-id_change2.jpg "replace id")
    
-14.Run the dotnet code to see the updated RU value. 
+14.Save the code and run to see the updated RU value.
   
-  ``sh
-     dotnet run
-   ``
+   ```sh
+   dotnet run
+   ```
+  
   ![default indexing RU value](./assets/04-with_index_RU.jpg "RU VALUES WITH DEFAULT RU ")
 
 15.You will be able to see the changes in RU value with or without indexing.
