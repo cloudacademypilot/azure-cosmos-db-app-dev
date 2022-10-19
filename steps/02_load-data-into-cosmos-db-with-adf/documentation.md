@@ -170,8 +170,9 @@ You will validate that the data was successfully imported into your container us
 
 1. Within the **FoodCollection** node, select the **Items** link to view a subset of the various documents in the container. Select a few of the documents and observe the properties and structure of the documents.
 
-    ![Items is highlighted](./assets/03-documents.jpg "Select Items")
+    ![Items is highlighted](./assets/02-cosmos_items.jpg "Select Items")
+    
 
-    ![An Example document is displayed](./assets/03-example_document.jpg "Select a document")
+    ![An Example document is displayed](./assets/02-cosmos_items_structure.jpg "Select a document")
 
 > If this is your final lab, follow the steps in [Removing Lab Assets](11-cleaning_up.md) to remove all lab resources.
