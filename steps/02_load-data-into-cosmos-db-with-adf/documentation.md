@@ -28,7 +28,7 @@ You will now create a database and container within your Azure Cosmos DB account
 
 1. In the **Add Container** popup, perform the following actions:
 
-    1. In the **Database id** field, select the **Create new** option and enter the value **ImportDatabase**.
+    1. In the **Database id** field, select the **Create new** option and enter the value **NutritionDatabase**.
 
     2. Do not check the **Provision database throughput** option.
 
@@ -71,7 +71,7 @@ You will use **Azure Data Factory (ADF)** to import the JSON array stored in the
     ![Cosmos Lab storage account](./assets/03-storageacct-file-upload.jpg "Cosmos Lab storage account file upload")  
 
     
-1. After file is uploaded, click on link **shared access tokens** to open the dialog for generating SAS token and select Permissions dropdown check **List** and **reader**,  Click on button **Generate SAS token and URL** to generate container SAS. Copy the **Blob SAS URL**. 
+1. After file is uploaded, click on link **shared access tokens** to open the dialog for generating SAS token and select Permissions dropdown check **List** and **reader**,  Click on **Generate SAS token and URL** button to generate container SAS. Copy the **Blob SAS URL**. 
 
      ![Cosmos Lab storage account get SAS](./assets/02_SASToken.jpg "Cosmos Lab storage account get SAS")
    
@@ -87,11 +87,11 @@ You will use **Azure Data Factory (ADF)** to import the JSON array stored in the
 
     ![Built in copy task is displayed](./assets/03-adf-built-in-copy.jpg "Select built in copy activity")
 
-1. **Create a new connection** and select **Azure Blob Storage**. We will import data from a json file on Azure Blob Storage. In addition to Blob Storage, you can use ADF to migrate from a wide variety of sources. We will not cover migration from these sources in this tutorial.
+1. Select Source type as **Azure Blob Storage**. We will import data from a json file on Azure Blob Storage. In addition to Blob Storage, you can use ADF to migrate from a wide variety of sources. We will not cover migration from these sources in this tutorial.
 
     ![Create new connection link is highlighted](./assets/02_SourceType.jpg "Create a new connection")
     
-1. Name the source **NutritionJson** and select **SAS URI** as the Authentication method. Please use the SAS URI generated from the previous step for read-only access to the Blob Storage container:
+1. Click on **New Connection** , Name it as **NutritionJson** and select **SAS URI** as the Authentication method. Please use the SAS URI generated from the previous step for read-only access to the Blob Storage container:
 
      `https://cosmoslabstrgacctmyx5zl.blob.core.windows.net/nutritiondata?sp=r&st=2022-10-17T14:41:58Z&se=2022-10-17T22:41:58Z&spr=https&sv=2021-06-08&sr=c&sig=IZBcvj4HjjIO4K0lJ4ROMprH6rypsWZHO64bCPHzCoE%3D`
 
@@ -99,7 +99,7 @@ You will use **Azure Data Factory (ADF)** to import the JSON array stored in the
 
 1. Select **Create**
 1. Select **Next**
-1. In the **File or Folder** textbox, enter the folder name as ``nutirion-data`` and then click on **Browse** to select the **nutrition-data** folder. Finally select **NutritionData.json** file.
+1. In the **File or Folder** textbox, enter the folder name as ``nutritiondata`` and then click on **Browse** to open **NutritionData.json** file.
 
     ![The nutritiiondata folder is displayed](./assets/02_Selectnutrition.jpg "Select the NutritionData.json file")
 
@@ -113,17 +113,10 @@ You will use **Azure Data Factory (ADF)** to import the JSON array stored in the
 
 1. You have now successfully connected the Blob Storage container with the nutrition.json file as the source.
 
-1. For the **Destination data store** add the Cosmos DB target data store by selecting **Create new connection** and selecting **Azure Cosmos DB (SQL API)**.
+1. Under **Destination data store** , select destination type as  **Azure Cosmos DB (SQL API)**. For Connection, click on **Create new connection**.
 
     !["The New Linked Service dialog is displayed"](./assets/02_Destination.jpg "Select the Azure Cosmos DB service type")
 
-1. Name the linked service **targetcosmosdb** and select your Azure subscription and Cosmos DB account. You should also select the Cosmos DB **ImportDatabase** that you created earlier.
-
-    !["The linked service configuration dialog is displayed"](./assets/03-adf_selecttargetdb.jpg "Select the ImportDatabase database")
-
-1. Select your newly created **targetcosmosdb** connection as the Destination data store.
-
-    !["The destination data source dialog is displayed"](./assets/03-adf_destconnectionnext.jpg "Select your recently created data source")
 
 1. Select your **FoodCollection** container from the drop-down menu. You will map your Blob storage file to the correct Cosmos DB container. Select **Next** to continue.
 
@@ -165,11 +158,11 @@ You will validate that the data was successfully imported into your container us
 
 1. In the **Azure Cosmos DB** blade, locate and select the **Data Explorer** link on the left side of the blade.
 
-    ![The Data Explorer link was selected and is blade is displayed](./assets/03-data_explorer_pane.jpg "Select Data Explorer")
+    ![The Data Explorer link was selected and is blade is displayed](./assets/02-cosmos_dataexplorer_without.jpg "Select Data Explorer")
 
-1. In the **Data Explorer** section, expand the **ImportDatabase** database node and then expand the **FoodCollection** container node.
+1. In the **Data Explorer** section, expand the **NutritionDatabase** database node and then expand the **FoodCollection** container node.
 
-    ![The Container node is displayed](./assets/03-collection_node.jpg "Expand the ImportDatabase node")
+    ![The Container node is displayed](./assets/02-cosmos_dataexplorer.jpg "Expand the ImportDatabase node")
 
 1. Within the **FoodCollection** node, select the **Scale and Settings** link to view the throughput for the container. Reduce the throughput to **400 RU/s**.
 
