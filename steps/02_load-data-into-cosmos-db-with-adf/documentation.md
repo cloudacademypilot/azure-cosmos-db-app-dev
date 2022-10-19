@@ -91,9 +91,7 @@ You will use **Azure Data Factory (ADF)** to import the JSON array stored in the
 
     ![Create new connection link is highlighted](./assets/02_SourceType.jpg "Create a new connection")
     
-1. Click on **New Connection** , Name it as **NutritionJson** and select **SAS URI** as the Authentication method. Please use the SAS URI generated from the previous step for read-only access to the Blob Storage container:
-
-     `https://cosmoslabstrgacctmyx5zl.blob.core.windows.net/nutritiondata?sp=r&st=2022-10-17T14:41:58Z&se=2022-10-17T22:41:58Z&spr=https&sv=2021-06-08&sr=c&sig=IZBcvj4HjjIO4K0lJ4ROMprH6rypsWZHO64bCPHzCoE%3D`
+1. Click on **New Connection** , Name it as **NutritionJson** and select **SAS URI** as the Authentication method. Please use the SAS URI generated from the previous step for read-only access to the Blob Storage container.
 
     ![The New linked service dialog is displayed](./assets/02_Connectionstring.jpg "Enter the SAS url in the dialog")
 
