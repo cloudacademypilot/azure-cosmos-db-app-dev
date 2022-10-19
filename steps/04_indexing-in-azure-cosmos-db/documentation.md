@@ -221,6 +221,183 @@ These queries only require an index be defined on **manufacturerName** and **foo
 
     > If a query does not use the index, the **Index hit document count** will be 0. We can see above that the query needed to retrieve 8,618 documents and ultimately ended up only returning 1 document.
 
+
+### RU values with or without Indexing Policies
+
+1. Open **File explorer** , navigate to **_C:\Users\cosmosLabUser\Desktop_** location and create **Lab04** folder that will be used to contain the content of your    .NET Core project.
+
+1. In the open terminal pane, enter and execute the following command:
+
+    ```sh
+    dotnet new console
+    ```
+
+    > This command will create a new .NET Core project. The project will be a **console** project and it creates Program.cs file.
+    
+    > You will see the below code in Program.cs and make sure you delete the existing below lines .
+    
+    ```sh
+       //See https://aka.ms/new-console-template for more information 
+       Console.WriteLine("Hello, World!"); 
+    ```
+
+1. Visual Studio Code will most likely prompt you to install various extensions related to **.NET Core** or **Azure Cosmos DB** development. None of these extensions are required to complete the labs.
+
+1. In the terminal pane, enter and execute the following command:
+
+    ```sh
+    dotnet add package Microsoft.Azure.Cosmos --version 3.12.0
+    ```
+
+    > This command will add the [Microsoft.Azure.Cosmos](https://www.nuget.org/packages/Microsoft.Azure.Cosmos/) NuGet package as a project dependency. The lab instructions have been tested using the `3.12.0` version of this NuGet package.
+
+1. In the terminal pane, enter and execute the following command:
+
+    ```sh
+    dotnet build
+    ```
+
+    > This command will build the project.
+
+1. Observe the **Program.cs** and **[folder name].csproj** files created by the .NET Core CLI.
+
+    ![The project file and the program.cs file are highlighted](./assets/02-project_files.jpg "Review the Project files")
+
+### Create CosmosClient Instance
+
+The CosmosClient class is the main "entry point" to using the Core (SQL) API in Azure Cosmos DB. We are going to create an instance of the **CosmosClient** class by passing in connection metadata as parameters of the class' constructor. We will then use this class instance throughout the lab.
+
+1. Within the **Program.cs** editor tab, Add the following using blocks to the top of the editor:
+
+    ```csharp
+        using System;
+        using Microsoft.Azure.Cosmos;
+        using System.Collections.Generic;
+        using System.Threading.Tasks;
+    ```
+1. Within the `Program` class, add the following lines of code to create variables for Cosmos DB Connection, Cosmos Client , Database , Container and main() method as given below.
+
+ ```csharp
+    
+ namespace _04_IndexingPolicy
+   {
+    public class Program
+       {
+        private static readonly string _endpointUri = "<your uri>";
+        private static readonly string _primaryKey = "<your key>";
+        private static readonly string _databaseId = "NutritionDatabase";
+        private static readonly string _containerId = "FoodCollection";
+
+        public static async Task Main(string[] args)
+          {
+             using (CosmosClient client = new CosmosClient(_endpointUri, _primaryKey))
+               {
+                var database = client.GetDatabase(_databaseId);
+                var container = database.GetContainer(_containerId);
+                Guid obj = Guid.NewGuid();
+               }
+          }
+       }
+   }
+  
+ ```
+i.  For the `_endpointUri` variable, replace the placeholder value with the **URI** value from your Azure Cosmos DB account
+
+   > For example, if your **uri** is `https://cosmosacct.documents.azure.com:443/`, your new variable assignment will look like this:
+
+   ```csharp
+    
+     private static readonly string _endpointUri = "https://cosmosacct.documents.azure.com:443/"; 
+     
+   ```
+
+ii. For the `_primaryKey` variable, replace the placeholder value with the **PRIMARY KEY** value from your Azure Cosmos DB account
+
+   > For example, if your **primary key** is ``elzirrKCnXlacvh1CRAnQdYVbVLspmYHQyYrhx0PltHi8wn5lHVHFnd1Xm3ad5cn4TUcH4U0MSeHsVykkFPHpQ==``, your new variable assignment will look like this:
+
+   ```csharp
+    
+     private static readonly string _primaryKey = "elzirrKCnXlacvh1CRAnQdYVbVLspmYHQyYrhx0PltHi8wn5lHVHFnd1Xm3ad5cn4TUcH4U0MSeHsVykkFPHpQ==";
+    
+   ```
+
+  > Keep the **URI** and **PRIMARY KEY** values recorded, you will use them again later in this lab.
+
+
+### Create a record in the container 
+
+1. To create a record ``Food`` in the container copy paste the below code inside Program class and outside the main method.
+   
+   ```csharp
+            public record Food(
+            string id,
+            string description,
+            string[] tags ,
+            string[] nutrients,
+            string foodGroup,
+            string manufacturerName,
+            string[] servings
+          );
+   ```
+ 
+ ### Create new item and add to container
+ 
+ 1. To create new item,  make sure you add below lines after the creation of GUID object in the above code.
+       
+  ```csharp
+     
+            Food item = new(
+            id : "566666",
+            description : "oats  ready-to-eat, KELLOGG, KELLOGG'S ALL-BRAN Original",
+            foodGroup : "Breakfast oats",
+            manufacturerName :"Kellogg, Co.",
+            tags : new string[]{},
+            nutrients: new string[]{},
+            servings : new string[]{}
+            );
+  
+  ```
+  
+ 2. Now you will add the following code to asynchronously create a single item in the container with its partition key and id:
+
+   ```csharp
+       ItemResponse<Food> response = await container.CreateItemAsync(item, new PartitionKey("Breakfast oats"));
+   ```
+### Printing the item id and RUs :
+
+1. Add the following line of code to print the ``item id``.
+  
+  ```csharp
+  
+      await Console.Out.WriteLineAsync($"Existing description:\t{item.id}");
+      
+  ```
+  
+2. Add the following line of code to print the ``RU value``.
+
+  ```csharp
+  
+      await Console.Out.WriteLineAsync($"New RU:\t{response.RequestCharge}");
+      
+  ```
+    
+  Now your Program.cs file should look like.
+
+   ```csharp
+
+
+   ```
+   
+3. Save all of your open editor tabs.
+
+4. In the open terminal pane, enter and execute the following command:
+
+   ```sh
+   dotnet run
+   ```
+
+
+
 ### Edit the indexing policy by excluding paths
 
 In addition to manually including certain paths to be indexed, you can exclude specific paths. In many cases, this approach can be simpler since it will allow all new properties in your document to be indexed by default. If there is a property that you are certain you will never use in your queries, you should explicitly exclude this path.
