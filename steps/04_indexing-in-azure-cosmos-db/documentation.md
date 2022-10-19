@@ -261,7 +261,7 @@ These queries only require an index be defined on **manufacturerName** and **foo
 
 1. Observe the **Program.cs** and **[folder name].csproj** files created by the .NET Core CLI.
 
-    ![The project file and the program.cs file are highlighted](./assets/02-project_files.jpg "Review the Project files")
+    ![The project file and the program.cs file are highlighted](./assets/04-csproj_img.jpg "Review the Project files")
 
 ### Create CosmosClient Instance
 
