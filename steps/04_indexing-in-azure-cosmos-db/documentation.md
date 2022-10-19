@@ -267,7 +267,7 @@ These queries only require an index be defined on **manufacturerName** and **foo
 
 The CosmosClient class is the main "entry point" to using the Core (SQL) API in Azure Cosmos DB. We are going to create an instance of the **CosmosClient** class by passing in connection metadata as parameters of the class' constructor. We will then use this class instance throughout the lab.
 
-1. Within the **Program.cs** editor tab, Add the following using blocks to the top of the editor:
+1. Within the **Program.cs** editor tab, add the below lines of code.
 
     ```csharp
         using System;
@@ -294,7 +294,7 @@ The CosmosClient class is the main "entry point" to using the Core (SQL) API in 
                {
                 var database = client.GetDatabase(_databaseId);
                 var container = database.GetContainer(_containerId);
-                Guid obj = Guid.NewGuid();
+      
                }
           }
        }
@@ -326,7 +326,7 @@ ii. For the `_primaryKey` variable, replace the placeholder value with the **PRI
 
 ### Create a record in the container 
 
-1. To create a record ``Food`` in the container copy paste the below code inside Program class and outside the main method.
+1. To create a record type object, copy paste the below code inside Program class and outside the main method.
    
    ```csharp
             public record Food(
@@ -342,7 +342,7 @@ ii. For the `_primaryKey` variable, replace the placeholder value with the **PRI
  
  ### Create new item and add to container
  
- 1. To create new item,  make sure you add below lines after the creation of GUID object in the above code.
+ 1. To create new record item,  make sure you add below lines inside main method.
        
   ```csharp
      
@@ -358,22 +358,22 @@ ii. For the `_primaryKey` variable, replace the placeholder value with the **PRI
   
   ```
   
- 2. Now you will add the following code to asynchronously create a single item in the container with its partition key and id:
+ 2. Now you will add the following code to asynchronously create a record in the container with its partition key.
 
    ```csharp
        ItemResponse<Food> response = await container.CreateItemAsync(item, new PartitionKey("Breakfast oats"));
    ```
-### Printing the item id and RUs :
+### Displaying the item id and RUs
 
-1. Add the following line of code to print the ``item id``.
+1. Add the following line of code to display the ``item id``.
   
   ```csharp
   
-      await Console.Out.WriteLineAsync($"Existing description:\t{item.id}");
+      await Console.Out.WriteLineAsync($"id:\t{item.id}");
       
   ```
   
-2. Add the following line of code to print the ``RU value``.
+2. Add the following line of code to display the ``RU value``.
 
   ```csharp
   
@@ -385,6 +385,60 @@ ii. For the `_primaryKey` variable, replace the placeholder value with the **PRI
 
    ```csharp
 
+using System;
+using Microsoft.Azure.Cosmos;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace _04_IndexingPolicy
+{
+   
+    public class Program
+    {
+        private static readonly string _endpointUri = "<your uri>";
+        private static readonly string _primaryKey = "<your key>";
+
+        private static readonly string _databaseId = "NutritionDatabase";
+        private static readonly string _containerId = "FoodCollection";
+
+        public static async Task Main(string[] args)
+        {
+       
+            using (CosmosClient client = new CosmosClient(_endpointUri, _primaryKey))
+            {
+                var database = client.GetDatabase(_databaseId);
+                var container = database.GetContainer(_containerId);
+                
+
+                // Create new item and add to container
+                Food item = new(
+                id : "1244447",
+                description : "oats  ready-to-eat, KELLOGG, KELLOGG'S ALL-BRAN Original",
+                foodGroup : "Breakfast oats",
+                manufacturerName :"Kellogg, Co.",
+                tags : new string[]{},
+                nutrients: new string[]{},
+                servings : new string[]{}
+                );
+
+                ItemResponse<Food> response = await container.CreateItemAsync(item, new PartitionKey("Breakfast oats"));
+                await Console.Out.WriteLineAsync($"id:\t{item.id}");
+                await Console.Out.WriteLineAsync($"New RU:\t{response.RequestCharge}");
+            }
+        }
+            public record Food(
+            string id,
+            string description,
+            string[] tags ,
+            string[] nutrients,
+            string foodGroup,
+            string manufacturerName,
+            string[] servings
+          );
+    }
+}
+
+     
 
    ```
    
