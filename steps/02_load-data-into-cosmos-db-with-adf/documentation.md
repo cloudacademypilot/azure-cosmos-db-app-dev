@@ -115,7 +115,7 @@ You will use **Azure Data Factory (ADF)** to import the JSON array stored in the
 
     !["The New Linked Services dialog is displayed"](./assets/02_Destination-Sqlapi.jpg "Select the Azure Cosmos DB service type")
 
-1. For Connection, click on **Create new connection**, Name the linked service targetcosmosdb and select your Azure subscription and Cosmos DB account. You should also select the Cosmos DB NutritionDatabase that you created earlier.
+1. For Connection, click on **New connection**, Name the linked service targetcosmosdb and select Cosmos DB account name. You should also select the Cosmos DB NutritionDatabase that you created earlier,click on Create.
 
     !["The New Linked Service dialog is displayed"](./assets/02_Destination_sub.jpg "Select the Azure Cosmos DB linked service type")
 
