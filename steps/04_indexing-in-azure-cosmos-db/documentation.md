@@ -350,7 +350,7 @@ ii. For the `_primaryKey` variable, replace the placeholder value with the **PRI
  
  ### Create new item and add to container
  
- 1. To create new record item,  make sure you add below lines inside main method.
+ 1. To create new record item, make sure you add below line inside main method.
        
   ```csharp
      
