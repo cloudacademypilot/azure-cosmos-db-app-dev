@@ -2,7 +2,10 @@
 
 In this lab, you will populate an Azure Cosmos DB container from an existing set of data using tools built in to Azure. After importing, you will use the Azure portal to view your imported data.
 
-> If you have not already completed setup for the lab content see the instructions for [Account Setup](00-account_setup.md) before starting this lab.  This will create an Azure Cosmos DB database and container that you will use throughout the lab. You will also use an **Azure Data Factory (ADF)** resource to import existing data into your container.
+### Recommended Prerequisites 
+
+- [Introduction to Data Factory](https://learn.microsoft.com/en-in/azure/data-factory/introduction) 
+- [Copy and transform data in Azure Cosmos DB using Azure Data Factory](https://learn.microsoft.com/en-us/azure/data-factory/connector-azure-cosmos-db?tabs=data-factory)
 
 ## Create Azure Cosmos DB Database and Container
 
@@ -28,7 +31,7 @@ You will now create a database and container within your Azure Cosmos DB account
 
 1. In the **Add Container** popup, perform the following actions:
 
-    1. In the **Database id** field, select the **Create new** option and enter the value **ImportDatabase**.
+    1. In the **Database id** field, select the **Create new** option and enter the value **NutritionDatabase**.
 
     2. Do not check the **Provision database throughput** option.
 
@@ -68,11 +71,12 @@ You will use **Azure Data Factory (ADF)** to import the JSON array stored in the
     ![Cosmos Lab storage account](./assets/03-storageacct-container-upload.jpg "Cosmos Lab storage account upload")
 
 1. Click on the upload button, this will open up a form to upload blob file on the right hand side. Click on the **select file** button and nagivate to ***C:->Labs->setup folder*** on VM and select **NutritionData** json file using the file browser. Use the upload button to upload the file to the container  
-    ![Cosmos Lab storage account](./assets/03-storageacct-file-upload.jpg "Cosmos Lab storage account file upload")
+    ![Cosmos Lab storage account](./assets/03-storageacct-file-upload.jpg "Cosmos Lab storage account file upload")  
 
-1. After file is uploaded, click on link **shared access tokens** to open the dialog for generating SAS token. Click on 
-button **Generate SAS token and URL** to generate container SAS. Copy the **Blob SAS URL**. 
-     ![Cosmos Lab storage account get SAS](./assets/03-storageacct-get-sas.jpg "Cosmos Lab storage account get SAS")
+    
+1. After file is uploaded, click on link **shared access tokens** to open the dialog for generating SAS token and select Permissions dropdown check **List** and **reader**,  Click on **Generate SAS token and URL** button to generate container SAS. Copy the **Blob SAS URL**. 
+
+     ![Cosmos Lab storage account get SAS](./assets/02_SASToken.jpg "Cosmos Lab storage account get SAS")
    
 1. Open the Data Factory. Select **Open Azure Data Factory Studio** to launch ADF studio.
 
@@ -86,27 +90,23 @@ button **Generate SAS token and URL** to generate container SAS. Copy the **Blob
 
     ![Built in copy task is displayed](./assets/03-adf-built-in-copy.jpg "Select built in copy activity")
 
-1. **Create a new connection** and select **Azure Blob Storage**. We will import data from a json file on Azure Blob Storage. In addition to Blob Storage, you can use ADF to migrate from a wide variety of sources. We will not cover migration from these sources in this tutorial.
+1. Select Source type as **Azure Blob Storage**. We will import data from a json file on Azure Blob Storage. In addition to Blob Storage, you can use ADF to migrate from a wide variety of sources. We will not cover migration from these sources in this tutorial.
 
-    ![Create new connection link is highlighted](./assets/03-adf_blob.jpg "Create a new connection")
+    ![Create new connection link is highlighted](./assets/02_SourceType.jpg "Create a new connection")
+    
+1. Click on **New Connection** , Name it as **NutritionJson** and select **SAS URI** as the Authentication method. Please use the SAS URI generated from the previous step for read-only access to the Blob Storage container.
 
-    ![Azure Blog Storage is highlighted](./assets/03-adf_blob2.jpg "Select the Azure Blob Storage connection type")
-
-1. Name the source **NutritionJson** and select **SAS URI** as the Authentication method. Please use the SAS URI generated from the previous step for read-only access to the Blob Storage container:
-
-     `https://cosmoslabstrgacctmyx5zl.blob.core.windows.net/nutritiondata?sp=r&st=2022-10-17T14:41:58Z&se=2022-10-17T22:41:58Z&spr=https&sv=2021-06-08&sr=c&sig=IZBcvj4HjjIO4K0lJ4ROMprH6rypsWZHO64bCPHzCoE%3D`
-
-    ![The New linked service dialog is displayed](./assets/03-adf_connecttoblob.jpg "Enter the SAS url in the dialog")
+    ![The New linked service dialog is displayed](./assets/02_Connectionstring.jpg "Enter the SAS url in the dialog")
 
 1. Select **Create**
 1. Select **Next**
-1. In the **File or Folder** textbox, enter the folder name as ``nutirion-data`` and then click on **Browse** to select the **nutrition-data** folder. Finally select **NutritionData.json** file.
+1. In the **File or Folder** textbox, enter the folder name as ``nutritiondata`` and then click on **Browse** to open **NutritionData.json** file.
 
-    ![The nutritiiondata folder is displayed](./assets/03-adf_choosestudents.jpg "Select the NutritionData.json file")
+    ![The nutritiiondata folder is displayed](./assets/02_Selectnutrition.jpg "Select the NutritionData.json file")
 
 1. Un-check **Copy file recursively** or **Binary Copy** if they are checked. Also ensure that other fields are empty. Click **Next**
 
-    ![The input file or folder dialog is displayed](./assets/03-adf_source_next.jpg "Ensure all other fields are empty, select next")
+    ![The input file or folder dialog is displayed](./assets/02-uncheck.jpg "Ensure all other fields are empty, select next")
 
 1. Select the file format as **JSON format**. Then select **Next**.
 
@@ -114,25 +114,21 @@ button **Generate SAS token and URL** to generate container SAS. Copy the **Blob
 
 1. You have now successfully connected the Blob Storage container with the nutrition.json file as the source.
 
-1. For the **Destination data store** add the Cosmos DB target data store by selecting **Create new connection** and selecting **Azure Cosmos DB (SQL API)**.
+1. Under **Destination data store** , select destination type as  **Azure Cosmos DB (SQL API)**.
 
-    !["The New Linked Service dialog is displayed"](./assets/03-adf_selecttarget.jpg "Select the Azure Cosmos DB service type")
+    !["The New Linked Services dialog is displayed"](./assets/02_Destination-Sqlapi.jpg "Select the Azure Cosmos DB service type")
 
-1. Name the linked service **targetcosmosdb** and select your Azure subscription and Cosmos DB account. You should also select the Cosmos DB **ImportDatabase** that you created earlier.
+1. For Connection, click on **New connection**, Name the linked service targetcosmosdb and select Cosmos DB account name. You should also select the Cosmos DB NutritionDatabase that you created earlier,click on Create.
 
-    !["The linked service configuration dialog is displayed"](./assets/03-adf_selecttargetdb.jpg "Select the ImportDatabase database")
-
-1. Select your newly created **targetcosmosdb** connection as the Destination data store.
-
-    !["The destination data source dialog is displayed"](./assets/03-adf_destconnectionnext.jpg "Select your recently created data source")
+    !["The New Linked Service dialog is displayed"](./assets/02_Destination_sub.jpg "Select the Azure Cosmos DB linked service type")
 
 1. Select your **FoodCollection** container from the drop-down menu. You will map your Blob storage file to the correct Cosmos DB container. Select **Next** to continue.
 
-    !["The table mapping dialog is displayed"](./assets/03-adf_correcttable.jpg "Select the FoodCollection container")
+    !["The table mapping dialog is displayed"](./assets/02_Destination_foodcollection.jpg "Select the FoodCollection container")
 
-1. There is no need to change any `Settings`. Select **next**.
+1. You can give any name for Task name or there is no need to change any `Settings`. Select **next**.
 
-    !["The settings dialog is displayed"](./assets/03-adf_settings.jpg "Review the dialog, select next")
+    !["The settings dialog is displayed"](./assets/02-cosmos_task_Name.jpg "Review the dialog, select next")
 
 1. Select **Next** to begin deployment After deployment is complete, select **Monitor**.
 
@@ -166,11 +162,11 @@ You will validate that the data was successfully imported into your container us
 
 1. In the **Azure Cosmos DB** blade, locate and select the **Data Explorer** link on the left side of the blade.
 
-    ![The Data Explorer link was selected and is blade is displayed](./assets/03-data_explorer_pane.jpg "Select Data Explorer")
+    ![The Data Explorer link was selected and is blade is displayed](./assets/02-cosmos_dataexplorer_without.jpg "Select Data Explorer")
 
-1. In the **Data Explorer** section, expand the **ImportDatabase** database node and then expand the **FoodCollection** container node.
+1. In the **Data Explorer** section, expand the **NutritionDatabase** database node and then expand the **FoodCollection** container node.
 
-    ![The Container node is displayed](./assets/03-collection_node.jpg "Expand the ImportDatabase node")
+    ![The Container node is displayed](./assets/02-cosmos_dataexplorer.jpg "Expand the ImportDatabase node")
 
 1. Within the **FoodCollection** node, select the **Scale and Settings** link to view the throughput for the container. Reduce the throughput to **400 RU/s**.
 
@@ -178,8 +174,8 @@ You will validate that the data was successfully imported into your container us
 
 1. Within the **FoodCollection** node, select the **Items** link to view a subset of the various documents in the container. Select a few of the documents and observe the properties and structure of the documents.
 
-    ![Items is highlighted](./assets/03-documents.jpg "Select Items")
+    ![Items is highlighted](./assets/02-cosmos_items.jpg "Select Items")
+    
+    ![An Example document is displayed](./assets/02-cosmos_items_structure.jpg "Select a document")
 
-    ![An Example document is displayed](./assets/03-example_document.jpg "Select a document")
 
-> If this is your final lab, follow the steps in [Removing Lab Assets](11-cleaning_up.md) to remove all lab resources.

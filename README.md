@@ -1,4 +1,4 @@
-# Application development with Azure Cosmos DB
+# Introduction to Application Development using Azure Cosmos DB
 The objective of this lab is to provide participants solid understanding and experience of developing applications using Azure Cosmos DB. The intended audience for the lab is architects and developers who design, build, and troubleshoot Cosmos DB solutions that meet business and technical requirements. The following are the main topics covered in the lab. 
 
 1. Cosmos DB Account creation,  partitioning, loading data and resource governance for building and configuring scalable applications agnostic of a specific Cosmos DB API. 

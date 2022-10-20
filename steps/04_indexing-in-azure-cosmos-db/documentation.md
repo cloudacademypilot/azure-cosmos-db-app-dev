@@ -221,6 +221,315 @@ These queries only require an index be defined on **manufacturerName** and **foo
 
     > If a query does not use the index, the **Index hit document count** will be 0. We can see above that the query needed to retrieve 8,618 documents and ultimately ended up only returning 1 document.
 
+
+### Effect of index policies on writes
+
+Now we will examine the effect of indexing policies on writes using .NET program.
+
+1. Open **File explorer** , navigate to **_C:\Users\cosmosLabUser\Desktop_** location and create **Lab04** folder that will be used to contain the content of your .NET Core project.
+
+1. In the open terminal pane, enter and execute the following command:
+
+    ```sh
+    dotnet new console
+    ```
+
+    > This command will create a new .NET Core project. The project will be a **console** project and it creates Program.cs file.
+    
+    > You will see the below code in Program.cs and make sure you delete the existing below lines .
+    
+    ```sh
+       //See https://aka.ms/new-console-template for more information 
+       Console.WriteLine("Hello, World!"); 
+    ```
+
+    > Visual Studio Code will most likely prompt you to install various extensions related to **.NET Core** or **Azure Cosmos DB** development. None of these extensions are required to complete the labs.
+
+1. In the terminal pane , execute the below command:
+
+   ```sh
+   dotnet add package Newtonsoft.Json
+   ```
+   > This command installs Nuget which contains reusable code that other developers have made available to you for use in your projects.
+   > After you install a NuGet package, you can then make a reference to it in your code with the using <namespace> statement, where <namespace> is the name of package you're using. 
+
+1. In the terminal pane, enter and execute the following command:
+
+    ```sh
+    dotnet add package Microsoft.Azure.Cosmos --version 3.12.0
+    ```
+
+    > This command will add the [Microsoft.Azure.Cosmos](https://www.nuget.org/packages/Microsoft.Azure.Cosmos/) NuGet package as a project dependency. The lab instructions have been tested using the `3.12.0` version of this NuGet package.
+
+
+
+1. In the terminal pane, enter and execute the following command:
+
+    ```sh
+    dotnet build
+    ```
+
+    > This command will build the project.
+
+1. Observe the **Program.cs** and **[folder name].csproj** files created by the .NET Core CLI.
+
+    ![The project file and the program.cs file are highlighted](./assets/04-csproj_img.jpg "Review the Project files")
+
+### Create CosmosClient Instance
+
+The CosmosClient class is the main "entry point" to using the Core (SQL) API in Azure Cosmos DB. We are going to create an instance of the **CosmosClient** class by passing in connection metadata as parameters of the class' constructor. We will then use this class instance throughout the lab.
+
+1. Within the **Program.cs** editor tab, add the below lines of code.
+
+ ```csharp
+        using System;
+        using Newtonsoft.Json;
+        using Microsoft.Azure.Cosmos;
+        using System.Collections.Generic;
+        using System.Threading.Tasks;
+ ```
+1. Within the `Program` class, add the following lines of code to create variables for Cosmos DB Connection, Cosmos Client , Database , Container and main() method as given below.
+
+ ```csharp
+    
+ namespace _04_IndexingPolicy
+   {
+    public class Program
+       {
+        private static readonly string _endpointUri = "<your uri>";
+        private static readonly string _primaryKey = "<your key>";
+        private static readonly string _databaseId = "NutritionDatabase";
+        private static readonly string _containerId = "FoodCollection";
+
+        public static async Task Main(string[] args)
+          {
+             using (CosmosClient client = new CosmosClient(_endpointUri, _primaryKey))
+               {
+                var database = client.GetDatabase(_databaseId);
+                var container = database.GetContainer(_containerId);
+      
+               }
+          }
+       }
+   }
+  
+ ```
+i.  For the `_endpointUri` variable, replace the placeholder value with the **URI** value from your Azure Cosmos DB account
+
+   > For example, if your **uri** is `https://cosmosacct.documents.azure.com:443/`, your new variable assignment will look like this:
+
+   ```csharp
+    
+     private static readonly string _endpointUri = "https://cosmosacct.documents.azure.com:443/"; 
+     
+   ```
+
+ii. For the `_primaryKey` variable, replace the placeholder value with the **PRIMARY KEY** value from your Azure Cosmos DB account
+
+   > For example, if your **primary key** is ``elzirrKCnXlacvh1CRAnQdYVbVLspmYHQyYrhx0PltHi8wn5lHVHFnd1Xm3ad5cn4TUcH4U0MSeHsVykkFPHpQ==``, your new variable assignment will look like this:
+
+   ```csharp
+    
+     private static readonly string _primaryKey = "elzirrKCnXlacvh1CRAnQdYVbVLspmYHQyYrhx0PltHi8wn5lHVHFnd1Xm3ad5cn4TUcH4U0MSeHsVykkFPHpQ==";
+    
+   ```
+
+### Create a record in the container 
+
+1. To create a record type object, copy paste the below code inside Program class and above the main method.
+   
+   ```csharp
+            public record Food(
+            string id,
+            string description,
+            string[] tags ,
+            string[] nutrients,
+            string foodGroup,
+            string manufacturerName,
+            string[] servings
+          );
+   ```
+ 
+ ### Create new item and add to container
+ 
+ 1. To create new record item, make sure you add below line inside main method.
+       
+  ```csharp
+     
+            Food item = new(
+            id : "402550",
+            description : "oats  ready-to-eat, KELLOGG, KELLOGG'S ALL-BRAN Original",
+            foodGroup : "Breakfast oats",
+            manufacturerName :"Kellogg, Co.",
+            tags : new string[]{},
+            nutrients: new string[]{},
+            servings : new string[]{}
+            );
+  
+  ```
+  
+ 2. Now you will add the following code to asynchronously create a record in the container with its partition key.
+
+   ```csharp
+       ItemResponse<Food> response = await container.CreateItemAsync(item, new PartitionKey("Breakfast oats"));
+   ```
+### Displaying the item id and RUs
+
+1. Add the following line of code to display the ``item properties`` and ``RU value``.
+  
+  ```csharp  
+      await Console.Out.WriteLineAsync($"{JsonConvert.SerializeObject( response.Resource,Formatting.Indented)}");    
+      await Console.Out.WriteLineAsync($"Request Charge:\t{response.RequestCharge}");      
+  ```
+  
+  Now your Program.cs file should look like.
+
+   ```csharp
+using System;
+using Newtonsoft.Json;
+using Microsoft.Azure.Cosmos;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace _04_IndexingPolicy
+{  
+    public class Program
+    {
+        private static readonly string _endpointUri = "<your uri>";
+        private static readonly string _primaryKey = "<your key>";
+        private static readonly string _databaseId = "NutritionDatabase";
+        private static readonly string _containerId = "FoodCollection";
+       
+        public record Food(
+            string id,
+            string description,
+            string[] tags ,
+            string[] nutrients,
+            string foodGroup,
+            string manufacturerName,
+            string[] servings
+          );
+        public static async Task Main(string[] args)
+        {        
+       
+            using (CosmosClient client = new CosmosClient(_endpointUri, _primaryKey))
+            {
+                var database = client.GetDatabase(_databaseId);
+                var container = database.GetContainer(_containerId);
+                // Create new item and add to container
+                Food item = new(
+                id : "402550",
+                description : "oats  ready-to-eat, KELLOGG, KELLOGG'S ALL-BRAN Original",
+                foodGroup : "Breakfast oats",
+                manufacturerName :"Kellogg, Co.",
+                tags : new string[]{},
+                nutrients: new string[]{},
+                servings : new string[]{}
+                );
+
+                ItemResponse<Food> response = await container.CreateItemAsync(item, new PartitionKey("Breakfast oats"));
+                await Console.Out.WriteLineAsync($"{JsonConvert.SerializeObject( response.Resource,Formatting.Indented)}");
+                await Console.Out.WriteLineAsync($"Request Charge:\t{response.RequestCharge}");
+            }
+        }
+
+    }
+}
+
+
+   ```
+   
+3. Save the code in the open editor tab.
+
+4. Navigate to the **FoodCollection** in the Azure Portal.
+
+5. Select the **Scale & Settings** link under **_FoodCollection_** container.
+
+6. In the **Indexing Policy** section, replace the existing json file with default indexing policy as given below, this will case Comos DB to all properties.
+  
+  ```json
+   
+   {
+    "indexingMode": "consistent",
+    "automatic": true,
+    "includedPaths": [
+        {
+            "path": "/*"
+        }
+    ],
+    "excludedPaths": [
+        {
+            "path": "/\"_etag\"/?"
+        }
+    ]
+}
+  
+  ```
+
+7. Save the dotnet code and run to see the updated RU value.
+
+   ```sh
+   dotnet run
+   ```
+   
+   ![default indexing RU value](./assets/04-default_index_RU.jpg "RU VALUES WITH DEFAULT RU ")
+   
+   > Display shows the RU charge used for the insert operation.
+   
+8. Navigate to the **FoodCollection** in the Azure Portal.
+
+9. Select the **Scale & Settings** link under **_FoodCollection_** container.
+
+10. In the **Indexing Policy** section, replace the existing json file with indexing policy as given below. Here we are limiting the indexing to only two properties - **manufacturerName** and **foodGroup**, therefore the size of the index and RU charge used for write operations will be smaller than above. 
+
+   ```json
+   
+{
+    "indexingMode": "consistent",
+    "automatic": true,
+    "includedPaths": [
+        {
+            "path": "/manufacturerName/*"
+        },
+        {
+            "path": "/foodGroup/*"
+        }
+    ],
+    "excludedPaths": [
+        {
+            "path": "/*"
+        }
+    ]
+}
+
+  ```
+ 
+11.Now lets inster another iteam. Now navigate to dotnet code, as update the food item as shown below.  
+
+  ```csharp
+     
+            Food item = new(
+            id : "402549",
+            description : "oats  ready-to-eat, KELLOGG, KELLOGG'S ALL-BRAN Original",
+            foodGroup : "Breakfast oats",
+            manufacturerName :"Kellogg, Co.",
+            tags : new string[]{},
+            nutrients: new string[]{},
+            servings : new string[]{}
+            );
+  
+  ```
+     
+12.Save the code and run to see the updated RU value.
+  
+   ```sh
+   dotnet run
+   ```
+  
+  ![default indexing RU value](./assets/04-with_index_RU.jpg "RU VALUES WITH DEFAULT RU ")
+  
+ > As expected RU Charge of step no 12 is less than that of step 7, because of we updated indexing policy to reduce the indexing to only two propteries. This demonstrates that it is important to apply indexing only on required properties.
+
 ### Edit the indexing policy by excluding paths
 
 In addition to manually including certain paths to be indexed, you can exclude specific paths. In many cases, this approach can be simpler since it will allow all new properties in your document to be indexed by default. If there is a property that you are certain you will never use in your queries, you should explicitly exclude this path.
