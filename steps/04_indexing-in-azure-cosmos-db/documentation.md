@@ -222,7 +222,7 @@ These queries only require an index be defined on **manufacturerName** and **foo
     > If a query does not use the index, the **Index hit document count** will be 0. We can see above that the query needed to retrieve 8,618 documents and ultimately ended up only returning 1 document.
 
 
-### RU values with or without Indexing Policies
+### Effect of index policies on writes
 
 1. Open **File explorer** , navigate to **_C:\Users\cosmosLabUser\Desktop_** location and create **Lab04** folder that will be used to contain the content of your    .NET Core project.
 
@@ -474,6 +474,8 @@ namespace _04_IndexingPolicy
    
    ![default indexing RU value](./assets/04-default_index_RU.jpg "RU VALUES WITH DEFAULT RU ")
    
+   > Assuming the default indexing is on all properties, the number of RUs consumed to write an item increases as the item property count increases.
+   
 8. Navigate to the **FoodCollection** in the Azure Portal.
 
 9. Select the **Scale & Settings** link under **_FoodCollection_** container.
@@ -502,9 +504,22 @@ namespace _04_IndexingPolicy
 
   ```
  
-11.Now navigate to dotnet code , change the id of your choice under create new item. 
-   ![ID value](./assets/04-id_change2.jpg "replace id")
-   
+11.Now navigate to dotnet code , locate the below lines of code and change the **_id_** field value as per your choice.
+
+  ```csharp
+     
+            Food item = new(
+            id : "1402547",
+            description : "oats  ready-to-eat, KELLOGG, KELLOGG'S ALL-BRAN Original",
+            foodGroup : "Breakfast oats",
+            manufacturerName :"Kellogg, Co.",
+            tags : new string[]{},
+            nutrients: new string[]{},
+            servings : new string[]{}
+            );
+  
+  ```
+     
 12.Save the code and run to see the updated RU value.
   
    ```sh
@@ -513,8 +528,8 @@ namespace _04_IndexingPolicy
   
   ![default indexing RU value](./assets/04-with_index_RU.jpg "RU VALUES WITH DEFAULT RU ")
 
-13.You will be able to see the changes in RU value with or without indexing.
-    
+ > To reduce the RU consumption for write operations, limit the number of indexed properties. In this scenario we have included two properties i.e : **_manufacturerName_** and **_foodGroup_** for indexing. Hence the RU value can be less when compared to default indexing. 
+ > While comparing the outputs from **step** **7** and **12** , output 7's Request Unit value is greater than the output 12's Request Unit value. This cleary states that default indexing on all properties generates greater Request Units than the indexed properties. 
 
 ### Edit the indexing policy by excluding paths
 
