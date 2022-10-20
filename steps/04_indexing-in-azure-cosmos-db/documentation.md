@@ -224,7 +224,9 @@ These queries only require an index be defined on **manufacturerName** and **foo
 
 ### Effect of index policies on writes
 
-1. Open **File explorer** , navigate to **_C:\Users\cosmosLabUser\Desktop_** location and create **Lab04** folder that will be used to contain the content of your    .NET Core project.
+Now we will examine the effect of indexing policies on writes using .NET program.
+
+1. Open **File explorer** , navigate to **_C:\Users\cosmosLabUser\Desktop_** location and create **Lab04** folder that will be used to contain the content of your .NET Core project.
 
 1. In the open terminal pane, enter and execute the following command:
 
@@ -446,7 +448,7 @@ namespace _04_IndexingPolicy
 
 5. Select the **Scale & Settings** link under **_FoodCollection_** container.
 
-6. In the **Indexing Policy** section, replace the existing json file with default indexing policy as given below.
+6. In the **Indexing Policy** section, replace the existing json file with default indexing policy as given below, this will case Comos DB to all properties.
   
   ```json
    
@@ -475,13 +477,13 @@ namespace _04_IndexingPolicy
    
    ![default indexing RU value](./assets/04-default_index_RU.jpg "RU VALUES WITH DEFAULT RU ")
    
-   > Assuming the default indexing is on all properties, the number of RUs consumed to write an item increases as the item property count increases.
+   > Display shows the RU charge used for the insert operation.
    
 8. Navigate to the **FoodCollection** in the Azure Portal.
 
 9. Select the **Scale & Settings** link under **_FoodCollection_** container.
 
-10. In the **Indexing Policy** section, replace the existing json file with indexing policy as given below.
+10. In the **Indexing Policy** section, replace the existing json file with indexing policy as given below. Here we are limiting the indexing to only two properties - **manufacturerName** and **foodGroup**, therefore the size of the index and RU charge used for write operations will be smaller than the before. 
 
    ```json
    
@@ -505,8 +507,7 @@ namespace _04_IndexingPolicy
 
   ```
  
-11.Now navigate to dotnet code, locate the below lines of code and change the **_id_** field value as per your choice. 
-   > Previously the id was ``402550`` and now it's updated to ``402549`` 
+11.Now lets inster another iteam. Now navigate to dotnet code, as update the food item as shown below.  
 
   ```csharp
      
@@ -529,10 +530,8 @@ namespace _04_IndexingPolicy
    ```
   
   ![default indexing RU value](./assets/04-with_index_RU.jpg "RU VALUES WITH DEFAULT RU ")
-
- > To reduce the RU consumption for write operations, limit the number of indexed properties. In this scenario we have included two properties i.e : **_manufacturerName_** and **_foodGroup_** for indexing. Hence the RU value can be less when compared to default indexing. 
-    
- > While comparing the outputs from **step** **7** and **12**, **step 7** has Request Charge value as **``7.81``** which is greater than **``6.29``** from **step 12's** Request Charge value. This cleary states that default indexing on all properties generates greater Request Charges than the limited indexed properties. 
+  
+ > As expected RU Charge of step no 12 is less than that of step 7, because of we updated indexing policy to reduce the indexing to only two propteries. This demonstrates that it is important to apply indexing only on required properties.
 
 ### Edit the indexing policy by excluding paths
 
