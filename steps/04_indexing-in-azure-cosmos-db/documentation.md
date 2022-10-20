@@ -246,7 +246,7 @@ These queries only require an index be defined on **manufacturerName** and **foo
 1. In the terminal pane , execute the below command:
 
    ```sh
-   Install-Package Newtonsoft.Json
+   dotnet add package Newtonsoft.Json
    ```
    > This command installs Nuget which contains reusable code that other developers have made available to you for use in your projects.
    > After you install a NuGet package, you can then make a reference to it in your code with the using <namespace> statement, where <namespace> is the name of package you're using. 
@@ -373,22 +373,16 @@ ii. For the `_primaryKey` variable, replace the placeholder value with the **PRI
    ```
 ### Displaying the item id and RUs
 
-1. Add the following line of code to display the ``item properties``.
+1. Add the following line of code to display the ``item properties`` and ``RU value``.
   
   ```csharp
   
       await Console.Out.WriteLineAsync($"{JsonConvert.SerializeObject( response.Resource,Formatting.Indented)}");
-      
-  ```
-  
-2. Add the following line of code to display the ``RU value``.
-
-  ```csharp
-  
+    
       await Console.Out.WriteLineAsync($"Request Charge:\t{response.RequestCharge}");
       
   ```
-    
+  
   Now your Program.cs file should look like.
 
    ```csharp
@@ -538,7 +532,7 @@ namespace _04_IndexingPolicy
 
  > To reduce the RU consumption for write operations, limit the number of indexed properties. In this scenario we have included two properties i.e : **_manufacturerName_** and **_foodGroup_** for indexing. Hence the RU value can be less when compared to default indexing. 
     
- > While comparing the outputs from **step** **7** and **12** , output 7's Request Unit value is greater than the output 12's Request Unit value. This cleary states that default indexing on all properties generates greater Request Units than the limited indexed properties. 
+ > While comparing the outputs from **step** **7** and **12**, **step 7** has Request Charge value as **``7.81``** which is greater than **``6.29``** from **step 12's** Request Charge value. This cleary states that default indexing on all properties generates greater Request Charges than the limited indexed properties. 
 
 ### Edit the indexing policy by excluding paths
 
