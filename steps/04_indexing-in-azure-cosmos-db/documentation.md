@@ -377,12 +377,9 @@ ii. For the `_primaryKey` variable, replace the placeholder value with the **PRI
 
 1. Add the following line of code to display the ``item properties`` and ``RU value``.
   
-  ```csharp
-  
-      await Console.Out.WriteLineAsync($"{JsonConvert.SerializeObject( response.Resource,Formatting.Indented)}");
-    
-      await Console.Out.WriteLineAsync($"Request Charge:\t{response.RequestCharge}");
-      
+  ```csharp  
+      await Console.Out.WriteLineAsync($"{JsonConvert.SerializeObject( response.Resource,Formatting.Indented)}");    
+      await Console.Out.WriteLineAsync($"Request Charge:\t{response.RequestCharge}");      
   ```
   
   Now your Program.cs file should look like.
@@ -483,7 +480,7 @@ namespace _04_IndexingPolicy
 
 9. Select the **Scale & Settings** link under **_FoodCollection_** container.
 
-10. In the **Indexing Policy** section, replace the existing json file with indexing policy as given below. Here we are limiting the indexing to only two properties - **manufacturerName** and **foodGroup**, therefore the size of the index and RU charge used for write operations will be smaller than the before. 
+10. In the **Indexing Policy** section, replace the existing json file with indexing policy as given below. Here we are limiting the indexing to only two properties - **manufacturerName** and **foodGroup**, therefore the size of the index and RU charge used for write operations will be smaller than above. 
 
    ```json
    
