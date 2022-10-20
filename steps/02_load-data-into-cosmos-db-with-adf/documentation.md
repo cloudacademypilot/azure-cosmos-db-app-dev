@@ -2,7 +2,10 @@
 
 In this lab, you will populate an Azure Cosmos DB container from an existing set of data using tools built in to Azure. After importing, you will use the Azure portal to view your imported data.
 
-> If you have not already completed setup for the lab content see the instructions for [Account Setup](00-account_setup.md) before starting this lab.  This will create an Azure Cosmos DB database and container that you will use throughout the lab. You will also use an **Azure Data Factory (ADF)** resource to import existing data into your container.
+### Recommended Prerequisites 
+
+- [Introduction to Data Factory](https://learn.microsoft.com/en-in/azure/data-factory/introduction) 
+- [Copy and transform data in Azure Cosmos DB using Azure Data Factory](https://learn.microsoft.com/en-us/azure/data-factory/connector-azure-cosmos-db?tabs=data-factory)
 
 ## Create Azure Cosmos DB Database and Container
 
