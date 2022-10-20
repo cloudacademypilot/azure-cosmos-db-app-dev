@@ -243,6 +243,14 @@ These queries only require an index be defined on **manufacturerName** and **foo
 
 1. Visual Studio Code will most likely prompt you to install various extensions related to **.NET Core** or **Azure Cosmos DB** development. None of these extensions are required to complete the labs.
 
+1. In the terminal pane , execute the below command:
+
+   ```sh
+   Install-Package Newtonsoft.Json
+   ```
+   > This command installs Nuget which contains reusable code that other developers have made available to you for use in your projects.
+   > After you install a NuGet package, you can then make a reference to it in your code with the using <namespace> statement, where <namespace> is the name of package you're using. 
+
 1. In the terminal pane, enter and execute the following command:
 
     ```sh
@@ -250,6 +258,8 @@ These queries only require an index be defined on **manufacturerName** and **foo
     ```
 
     > This command will add the [Microsoft.Azure.Cosmos](https://www.nuget.org/packages/Microsoft.Azure.Cosmos/) NuGet package as a project dependency. The lab instructions have been tested using the `3.12.0` version of this NuGet package.
+
+
 
 1. In the terminal pane, enter and execute the following command:
 
@@ -271,6 +281,7 @@ The CosmosClient class is the main "entry point" to using the Core (SQL) API in 
 
     ```csharp
         using System;
+        using Newtonsoft.Json;
         using Microsoft.Azure.Cosmos;
         using System.Collections.Generic;
         using System.Threading.Tasks;
@@ -323,7 +334,7 @@ ii. For the `_primaryKey` variable, replace the placeholder value with the **PRI
 
 ### Create a record in the container 
 
-1. To create a record type object, copy paste the below code inside Program class and outside the main method.
+1. To create a record type object, copy paste the below code inside Program class and above the main method.
    
    ```csharp
             public record Food(
@@ -344,7 +355,7 @@ ii. For the `_primaryKey` variable, replace the placeholder value with the **PRI
   ```csharp
      
             Food item = new(
-            id : "1402547",
+            id : "402550",
             description : "oats  ready-to-eat, KELLOGG, KELLOGG'S ALL-BRAN Original",
             foodGroup : "Breakfast oats",
             manufacturerName :"Kellogg, Co.",
@@ -362,11 +373,11 @@ ii. For the `_primaryKey` variable, replace the placeholder value with the **PRI
    ```
 ### Displaying the item id and RUs
 
-1. Add the following line of code to display the ``item id``.
+1. Add the following line of code to display the ``item properties``.
   
   ```csharp
   
-      await Console.Out.WriteLineAsync($"id:\t{item.id}");
+      await Console.Out.WriteLineAsync($"{JsonConvert.SerializeObject( response.Resource,Formatting.Indented)}");
       
   ```
   
@@ -374,42 +385,47 @@ ii. For the `_primaryKey` variable, replace the placeholder value with the **PRI
 
   ```csharp
   
-      await Console.Out.WriteLineAsync($"New RU:\t{response.RequestCharge}");
+      await Console.Out.WriteLineAsync($"Request Charge:\t{response.RequestCharge}");
       
   ```
     
   Now your Program.cs file should look like.
 
    ```csharp
-
 using System;
+using Newtonsoft.Json;
 using Microsoft.Azure.Cosmos;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace _04_IndexingPolicy
-{
-   
+{  
     public class Program
     {
         private static readonly string _endpointUri = "<your uri>";
         private static readonly string _primaryKey = "<your key>";
-
         private static readonly string _databaseId = "NutritionDatabase";
         private static readonly string _containerId = "FoodCollection";
-
+       
+        public record Food(
+            string id,
+            string description,
+            string[] tags ,
+            string[] nutrients,
+            string foodGroup,
+            string manufacturerName,
+            string[] servings
+          );
         public static async Task Main(string[] args)
-        {
+        {        
        
             using (CosmosClient client = new CosmosClient(_endpointUri, _primaryKey))
             {
                 var database = client.GetDatabase(_databaseId);
                 var container = database.GetContainer(_containerId);
-                
-
                 // Create new item and add to container
                 Food item = new(
-                id : "1402547",
+                id : "402550",
                 description : "oats  ready-to-eat, KELLOGG, KELLOGG'S ALL-BRAN Original",
                 foodGroup : "Breakfast oats",
                 manufacturerName :"Kellogg, Co.",
@@ -419,23 +435,14 @@ namespace _04_IndexingPolicy
                 );
 
                 ItemResponse<Food> response = await container.CreateItemAsync(item, new PartitionKey("Breakfast oats"));
-                await Console.Out.WriteLineAsync($"id:\t{item.id}");
-                await Console.Out.WriteLineAsync($"New RU:\t{response.RequestCharge}");
+                await Console.Out.WriteLineAsync($"{JsonConvert.SerializeObject( response.Resource,Formatting.Indented)}");
+                await Console.Out.WriteLineAsync($"Request Charge:\t{response.RequestCharge}");
             }
         }
-            public record Food(
-            string id,
-            string description,
-            string[] tags ,
-            string[] nutrients,
-            string foodGroup,
-            string manufacturerName,
-            string[] servings
-          );
+
     }
 }
 
-     
 
    ```
    
@@ -504,12 +511,13 @@ namespace _04_IndexingPolicy
 
   ```
  
-11.Now navigate to dotnet code , locate the below lines of code and change the **_id_** field value as per your choice.
+11.Now navigate to dotnet code, locate the below lines of code and change the **_id_** field value as per your choice. 
+   > Previously the id was ``402550`` and now it's updated to ``402549`` 
 
   ```csharp
      
             Food item = new(
-            id : "1402547",
+            id : "402549",
             description : "oats  ready-to-eat, KELLOGG, KELLOGG'S ALL-BRAN Original",
             foodGroup : "Breakfast oats",
             manufacturerName :"Kellogg, Co.",
