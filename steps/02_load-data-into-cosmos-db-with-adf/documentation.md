@@ -176,7 +176,6 @@ You will validate that the data was successfully imported into your container us
 
     ![Items is highlighted](./assets/02-cosmos_items.jpg "Select Items")
     
-
     ![An Example document is displayed](./assets/02-cosmos_items_structure.jpg "Select a document")
 
-> If this is your final lab, follow the steps in [Removing Lab Assets](11-cleaning_up.md) to remove all lab resources.
+
