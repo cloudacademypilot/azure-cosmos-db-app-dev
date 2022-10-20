@@ -241,7 +241,7 @@ These queries only require an index be defined on **manufacturerName** and **foo
        Console.WriteLine("Hello, World!"); 
     ```
 
-1. Visual Studio Code will most likely prompt you to install various extensions related to **.NET Core** or **Azure Cosmos DB** development. None of these extensions are required to complete the labs.
+    > Visual Studio Code will most likely prompt you to install various extensions related to **.NET Core** or **Azure Cosmos DB** development. None of these extensions are required to complete the labs.
 
 1. In the terminal pane , execute the below command:
 
@@ -279,13 +279,13 @@ The CosmosClient class is the main "entry point" to using the Core (SQL) API in 
 
 1. Within the **Program.cs** editor tab, add the below lines of code.
 
-    ```csharp
+ ```csharp
         using System;
         using Newtonsoft.Json;
         using Microsoft.Azure.Cosmos;
         using System.Collections.Generic;
         using System.Threading.Tasks;
-    ```
+ ```
 1. Within the `Program` class, add the following lines of code to create variables for Cosmos DB Connection, Cosmos Client , Database , Container and main() method as given below.
 
  ```csharp
@@ -537,7 +537,8 @@ namespace _04_IndexingPolicy
   ![default indexing RU value](./assets/04-with_index_RU.jpg "RU VALUES WITH DEFAULT RU ")
 
  > To reduce the RU consumption for write operations, limit the number of indexed properties. In this scenario we have included two properties i.e : **_manufacturerName_** and **_foodGroup_** for indexing. Hence the RU value can be less when compared to default indexing. 
- > While comparing the outputs from **step** **7** and **12** , output 7's Request Unit value is greater than the output 12's Request Unit value. This cleary states that default indexing on all properties generates greater Request Units than the indexed properties. 
+    
+ > While comparing the outputs from **step** **7** and **12** , output 7's Request Unit value is greater than the output 12's Request Unit value. This cleary states that default indexing on all properties generates greater Request Units than the limited indexed properties. 
 
 ### Edit the indexing policy by excluding paths
 
