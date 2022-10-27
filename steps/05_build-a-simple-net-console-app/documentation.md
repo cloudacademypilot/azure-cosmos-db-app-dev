@@ -214,6 +214,14 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
            
         }
     ```
+1. To read multiple documents based on our requriements. we can modify the below code by changing the conditions.
+
+    ```csharp
+     var parameterizedQuery = new QueryDefinition(
+        query: "SELECT f.id, f.description, f.manufacturerName, f.servings FROM foods f WHERE f.manufacturerName != null"
+        );
+    ```
+    
 1. the following lines of code to page through the results of this query using a while loop.
     
     ```csharp
