@@ -142,6 +142,12 @@ ReadItemAsync allows a single item to be retrieved from Cosmos DB by its ID. In 
 
 UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Azure Cosmos DB, this is the most efficient method of writing a single document.
 
+1. Find the last line of code you wrote:
+   
+   ```csharp    
+    Console.Out.WriteLine($"Read {candy.Description}");
+    ```
+   
 1. Add the following lines of code to use the `UpsertItemAsync()` function to write a single item from your Cosmos DB by its `id` and write its description to the console.
 
     ```csharp
