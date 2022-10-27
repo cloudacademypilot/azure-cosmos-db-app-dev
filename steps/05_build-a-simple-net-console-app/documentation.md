@@ -214,6 +214,14 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
            
         }
     ```
+1. the following foreach block to iterate over the reponse items:
+   
+   ```sh
+   foreach (Food item in response)
+   {
+   }
+   ```   
+
 1. Save all of your open tabs in Visual Studio Code
 
 1. In the open terminal pane, enter and execute the following command:
@@ -231,6 +239,14 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 ## Write a single and multiple Documents in Azure Cosmos DB Using Quries
 
 1. Add the following lines of code to use the write a single and multiple items from your Cosmos DB by its `id` and `foodGroup` and write its description,manufactureName to the console.
+
+1. Find the last line of code you wrote:
+
+    ```csharp
+    await Console.Out.WriteLineAsync($"Read {item.description} by {item.manufacturerName}");
+    ```
+
+1. Within the foreach block, add the following line of code to asynchronously write a item and save the result:
 
     ```csharp
      item.description = "Cereals, MALT-O-MEAL, original, plain, dry";
