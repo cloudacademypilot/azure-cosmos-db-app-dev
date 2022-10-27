@@ -5,6 +5,8 @@ After using the Azure Portal's **Data Explorer** to query an Azure Cosmos DB con
 ### Recommended Prerequisites 
 
 - [Use the Azure Cosmos DB SQL API SDK](https://learn.microsoft.com/en-gb/training/modules/use-azure-cosmos-db-sql-api-sdk/)
+- [Understanding the difference between point reads and queries in Azure Cosmos DB](https://devblogs.microsoft.com/cosmosdb/point-reads-versus-queries/)
+- [Query items using a SQL query asynchronously](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-dotnet-query-items)
 
 ## Create a .NET Core Project
 
@@ -135,6 +137,42 @@ ReadItemAsync allows a single item to be retrieved from Cosmos DB by its ID. In 
 
    ```sh
    Read Candies, HERSHEY''S POT OF GOLD Almond Bar
+   ```
+## Write a single Document in Azure Cosmos DB Using UpsertItemAsync
+
+UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Azure Cosmos DB, this is the most efficient method of writing a single document.
+
+1. Add the following lines of code to use the `UpsertItemAsync()` function to write a single item from your Cosmos DB by its `id` and write its description to the console.
+
+    ```csharp
+        await Console.Out.WriteLineAsync($"Existing ETag:\t{response.ETag}");       
+        ItemRequestOptions requestOptions = new ItemRequestOptions { IfMatchEtag = response.ETag };  
+        candy.description = "Candies, HERSHEY'S POT OF GOLD Almond Bar-1";       
+        response = await container.UpsertItemAsync(candy, requestOptions: requestOptions);    
+
+        try
+        {
+            response = await container.UpsertItemAsync(candy, new PartitionKey(candy.foodGroup));
+            Console.WriteLine($"Write { candy.description}");
+
+        }
+        catch (Exception ex)
+        {
+            await Console.Out.WriteLineAsync($"Update error:\t{ex.Message}");
+        }
+    ```
+1. Save all of your open tabs in Visual Studio Code
+
+1. In the open terminal pane, enter and execute the following command:
+
+   ```sh
+   dotnet run
+   ```
+
+1. You should see the following line output in the console, indicating that `UpsertItemAsync()` completed successfully:
+
+   ```sh
+   Read Candies, HERSHEY''S POT OF GOLD Almond Bar-1
    ```
 
 ## Execute a Query Against a Single Azure Cosmos DB Partition
