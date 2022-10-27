@@ -214,6 +214,26 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
            
         }
     ```
+1. the following lines of code to page through the results of this query using a while loop.
+    
+    ```csharp
+   int pageCount = 0;
+        while (filteredFeed.HasMoreResults)
+        {
+            FeedResponse<Food> response = await filteredFeed.ReadNextAsync();
+
+            // Iterate query results
+            foreach (Food item in response)
+            {
+                Console.Out.WriteLine($"---Page #{++pageCount:0000}---");
+                await Console.Out.WriteLineAsync($"Read {item.description} by {item.manufacturerName}");
+                
+            }
+           
+        }
+   ```
+    
+    
 1. the following foreach block to iterate over the reponse items:
    
    ```sh
