@@ -175,6 +175,77 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
    Read Candies, HERSHEY''S POT OF GOLD Almond Bar-1
    ```
 
+## Read a single and multiple Documents in Azure Cosmos DB Using Queries
+
+1. Add the following lines of code to use the retrieve a single and multiple items from your Cosmos DB by its `id` and `foodGroup` and write its description,manufactureName to the console.
+
+    ```csharp
+     var parameterizedQuery = new QueryDefinition(
+        query: "SELECT * FROM food p WHERE p.id = @id and  p.foodGroup=@PartitionKey"
+        )
+        .WithParameter("@id", "08116")
+        .WithParameter("@PartitionKey", "Breakfast Cereals");
+
+
+        // Query multiple items from container
+        using FeedIterator<Food> filteredFeed = container.GetItemQueryIterator<Food>(
+            queryDefinition: parameterizedQuery, requestOptions: new QueryRequestOptions { MaxConcurrency = 5, MaxItemCount = 100 }
+
+        );
+
+        int pageCount = 0;
+        while (filteredFeed.HasMoreResults)
+        {
+            FeedResponse<Food> response = await filteredFeed.ReadNextAsync();
+
+            // Iterate query results
+            foreach (Food item in response)
+            {
+                Console.Out.WriteLine($"---Page #{++pageCount:0000}---");
+                await Console.Out.WriteLineAsync($"Read {item.description} by {item.manufacturerName}");
+                
+            }
+           
+        }
+    ```
+1. Save all of your open tabs in Visual Studio Code
+
+1. In the open terminal pane, enter and execute the following command:
+
+   ```sh
+   dotnet run
+   ```
+
+1. You should see the following line output in the console, indicating that `ReadItem` completed successfully:
+
+   ```sh
+   Read Cereals, MALT-O-MEAL, original, plain, dry by MOM Brands
+   ```
+
+## Write a single and multiple Documents in Azure Cosmos DB Using Quries
+
+1. Add the following lines of code to use the write a single and multiple items from your Cosmos DB by its `id` and `foodGroup` and write its description,manufactureName to the console.
+
+    ```csharp
+     item.description = "Cereals, MALT-O-MEAL, original, plain, dry";
+     item.manufacturerName = "MOM Brands";
+     var x = await container.UpsertItemAsync(item, new PartitionKey(item.foodGroup));
+     await Console.Out.WriteLineAsync($"Write {item.description} by {item.manufacturerName}");
+    ```
+1. Save all of your open tabs in Visual Studio Code
+
+1. In the open terminal pane, enter and execute the following command:
+
+   ```sh
+   dotnet run
+   ```
+
+1. You should see the following line output in the console, indicating that `ReadItemAsync()` completed successfully:
+
+   ```sh
+   Write Cereals, MALT-O-MEAL, original, plain, dry-1 by MOM Brands-1
+   ```
+
 ## Execute a Query Against a Single Azure Cosmos DB Partition
 
 1. Return to `program.cs` file editor window
