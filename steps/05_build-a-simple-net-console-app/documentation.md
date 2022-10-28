@@ -107,9 +107,9 @@ After using the Azure Portal's **Data Explorer** to query an Azure Cosmos DB con
 
 ## Understanding the point reads and queries in Azure Cosmos DB
 
-1. Point reads - It is a key/value lookup on a single item ID and partition key. The item ID and partition key combination is the key and the item itself is the value. For a 1 KB document, point reads typically cost 1 request unit with a latency under 10 ms. Point reads return a single whole item, not a partial item or a specific field.
+1. **Point reads** - It is a key/value lookup on a single item ID and partition key. The item ID and partition key combination is the key and the item itself is the value. For a 1 KB document, point reads typically cost 1 request unit with a latency under 10 ms. Point reads return a single whole item, not a partial item or a specific field.
 
-1. Queries - It is a query data by writing queries using the Structured Query Language (SQL) as a JSON query language. Queries always cost at least 2.3 request units and, in general, will have a higher and more variable latency than point reads. Queries can return many items.
+1. **Queries** - It is a query data by writing queries using the Structured Query Language (SQL) as a JSON query language. Queries always cost at least 2.3 request units and, in general, will have a higher and more variable latency than point reads. Queries can return many items.
 
 ## Read a single Document in Azure Cosmos DB Using ReadItemAsync
 
@@ -188,65 +188,22 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 
 ## Read a single Documents in Azure Cosmos DB Using Queries
 
-1. Add the following lines of code to use the retrieve a single and multiple items from your Cosmos DB by its `id` and `foodGroup` and write its description,manufactureName to the console.
+1. Add the following lines of code to use the retrieve a single items from your Cosmos DB by its `id` and write its description,manufactureName to the console.
 
     ```csharp
      var parameterizedQuery = new QueryDefinition(
-        query: "SELECT * FROM food p WHERE p.id = @id and  p.foodGroup=@PartitionKey"
+        query: "SELECT * FROM food p WHERE p.id = @id"
         )
-        .WithParameter("@id", "08116")
-        .WithParameter("@PartitionKey", "Breakfast Cereals");
-
-
-        // Query multiple items from container
+        .WithParameter("@id", "08116");
         using FeedIterator<Food> filteredFeed = container.GetItemQueryIterator<Food>(
-            queryDefinition: parameterizedQuery, requestOptions: new QueryRequestOptions { MaxConcurrency = 5, MaxItemCount = 100 }
-
-        );
-
-        int pageCount = 0;
-        while (filteredFeed.HasMoreResults)
+           queryDefinition: parameterizedQuery
+         );
+        FeedResponse<Food> response = await filteredFeed.ReadNextAsync(); 
+        foreach (Food item in response)
         {
-            FeedResponse<Food> response = await filteredFeed.ReadNextAsync();
-
-            // Iterate query results
-            foreach (Food item in response)
-            {
-                Console.Out.WriteLine($"---Page #{++pageCount:0000}---");
-                await Console.Out.WriteLineAsync($"Read {item.description} by {item.manufacturerName}");
-                
-            }
-           
-        }
-    ```
-1. To read multiple documents based on our requriements. we can modify the below code by changing the conditions.
-
-    ```csharp
-     var parameterizedQuery = new QueryDefinition(
-        query: "SELECT f.id, f.description, f.manufacturerName, f.servings FROM foods f WHERE f.manufacturerName != null"
-        );
-    ```
-    
-1. the following lines of code to page through the results of this query using a while loop.
-    
-    ```csharp
-   int pageCount = 0;
-        while (filteredFeed.HasMoreResults)
-        {
-            FeedResponse<Food> response = await filteredFeed.ReadNextAsync();
-
-            // Iterate query results
-            foreach (Food item in response)
-            {
-                Console.Out.WriteLine($"---Page #{++pageCount:0000}---");
-                await Console.Out.WriteLineAsync($"Read {item.description} by {item.manufacturerName}");
-                
-            }
-           
-        }
-   ```
-    
-    
+            await Console.Out.WriteLineAsync($"Read {item.description} by {item.manufacturerName}");
+        }  
+    ``` 
 1. the following foreach block to iterate over the reponse items:
    
    ```sh
@@ -271,7 +228,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 
 ## Read a multiple Documents in Azure Cosmos DB Using Queries
 
-1. To read multiple documents based on our requriements. we can modify the below code by changing the conditions.
+1. Add the following lines of code to retrieve a Multiple items from your Cosmos DB using select query and write its description,manufactureName to the console.
 
     ```csharp
       QueryDefinition query = new QueryDefinition("SELECT * FROM food");
@@ -353,7 +310,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
                     Console.WriteLine($"\nQueryWithContinuationTokens Diagnostics: {response.Diagnostics.ToString()}");
                 }
     ```
- 1. In the following code to get continuation token once we havve gotten > 0 results.
+ 1. Add the following lines of code to get continuation token once we havve gotten > 0 results.
 
     ```csharp
     if (response.Count > 0)
@@ -362,7 +319,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
            break;
          }
     ```
-1. In the following code check whether ContinuationToken is null or notnull, if null retrun to the process. 
+1. Add the following lines of code to check whether ContinuationToken is null or notnull, if null retrun to the process. 
 
     ```csharp
     if (continuation == null)
@@ -401,7 +358,12 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
    ```sh
    dotnet run
    ```
+1. You should see the following line output in the console, indicating that `ReadItem` completed successfully:
 
+   ```sh
+   Read Cereals, MALT-O-MEAL, original, plain, dry by MOM Brands
+   ```
+   
 ## Execute a Query Against a Single Azure Cosmos DB Partition
 
 1. Return to `program.cs` file editor window
