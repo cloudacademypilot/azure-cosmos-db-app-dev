@@ -186,7 +186,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
    Read Candies, HERSHEY''S POT OF GOLD Almond Bar-1
    ```
 
-## Read a multiple Documents in Azure Cosmos DB Using Queries
+## Read a single Documents in Azure Cosmos DB Using Queries
 
 1. Add the following lines of code to use the retrieve a single and multiple items from your Cosmos DB by its `id` and `foodGroup` and write its description,manufactureName to the console.
 
@@ -267,6 +267,139 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 
    ```sh
    Read Cereals, MALT-O-MEAL, original, plain, dry by MOM Brands
+   ```
+
+## Read a multiple Documents in Azure Cosmos DB Using Queries
+
+1. To read multiple documents based on our requriements. we can modify the below code by changing the conditions.
+
+    ```csharp
+      QueryDefinition query = new QueryDefinition("SELECT * FROM food");
+        string continuation = null;
+
+        List<Food> results = new List<Food>();
+        using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
+            query,
+            requestOptions: new QueryRequestOptions()
+            {
+                MaxItemCount = 1
+            }))
+        {
+            // Execute query and get 1 item in the results. Then, get a continuation token to resume later
+            while (resultSetIterator.HasMoreResults)
+            {
+                FeedResponse<Food> response = await resultSetIterator.ReadNextAsync();
+
+                results.AddRange(response);
+                if (response.Diagnostics != null)
+                {
+                    Console.WriteLine($"\nQueryWithContinuationTokens Diagnostics: {response.Diagnostics.ToString()}");
+                }
+
+                // Get continuation token once we've gotten > 0 results. 
+                if (response.Count > 0)
+                {
+                    continuation = response.ContinuationToken;
+                    break;
+                }
+            }
+        }
+        // Check if query has already been fully drained
+        if (continuation == null)
+        {
+            return;
+        }
+
+        // Resume query using continuation token
+        using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
+                query,
+                requestOptions: new QueryRequestOptions()
+                {
+                    MaxItemCount = -1
+                },
+                continuationToken: continuation))
+        {
+            while (resultSetIterator.HasMoreResults)
+            {
+                FeedResponse<Food> response = await resultSetIterator.ReadNextAsync();
+
+                results.AddRange(response);
+                if (response.Diagnostics != null)
+                {
+                    Console.WriteLine($"\nQueryWithContinuationTokens Diagnostics: {response.Diagnostics.ToString()}");
+                }
+            }
+           
+        }
+    ```
+    
+1. In the below code to Execute query and get 1 item in the results. Then, get a continuation token to resume later.
+   
+   ```csharp
+   using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
+            query,
+            requestOptions: new QueryRequestOptions()
+            {
+                MaxItemCount = 1
+            }))
+        {
+     while (resultSetIterator.HasMoreResults)
+            {
+                FeedResponse<Food> response = await resultSetIterator.ReadNextAsync();
+
+                results.AddRange(response);
+                if (response.Diagnostics != null)
+                {
+                    Console.WriteLine($"\nQueryWithContinuationTokens Diagnostics: {response.Diagnostics.ToString()}");
+                }
+    ```
+ 1. In the following code to get continuation token once we havve gotten > 0 results.
+
+    ```csharp
+    if (response.Count > 0)
+        {
+          continuation = response.ContinuationToken;
+           break;
+         }
+    ```
+1. In the following code check whether ContinuationToken is null or notnull, if null retrun to the process. 
+
+    ```csharp
+    if (continuation == null)
+        {
+            return;
+        }
+    ```
+1. In the following code ContinuationToken is not null, Resume query using continuation token and getting the result.
+
+     ```csharp
+    using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
+                query,
+                requestOptions: new QueryRequestOptions()
+                {
+                    MaxItemCount = -1
+                },
+                continuationToken: continuation))
+        {
+            while (resultSetIterator.HasMoreResults)
+            {
+                FeedResponse<Food> response = await resultSetIterator.ReadNextAsync();
+
+                results.AddRange(response);
+                if (response.Diagnostics != null)
+                {
+                    Console.WriteLine($"\nQueryWithContinuationTokens Diagnostics: {response.Diagnostics.ToString()}");
+                }
+            }
+           
+        }
+    ```
+1. Save all of your open tabs in Visual Studio Code
+
+1. In the open terminal pane, enter and execute the following command:
+
+   ```sh
+   dotnet run
    ```
 
 ## Execute a Query Against a Single Azure Cosmos DB Partition
