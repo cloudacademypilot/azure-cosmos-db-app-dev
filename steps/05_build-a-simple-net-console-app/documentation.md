@@ -6,6 +6,8 @@ After using the Azure Portal's **Data Explorer** to query an Azure Cosmos DB con
 
 - [Use the Azure Cosmos DB SQL API SDK](https://learn.microsoft.com/en-gb/training/modules/use-azure-cosmos-db-sql-api-sdk/)
 - [Understanding the difference between point reads and queries in Azure Cosmos DB](https://devblogs.microsoft.com/cosmosdb/point-reads-versus-queries/)
+- [Reading data with Spring Data Azure Cosmos DB](https://devblogs.microsoft.com/cosmosdb/read-data-spring-azure-cosmos-db-v3/)
+- [Optimize request cost in Azure Cosmos DB](https://learn.microsoft.com/en-us/azure/cosmos-db/optimize-cost-reads-writes)
 - [Query items using a SQL query asynchronously](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-dotnet-query-items)
 
 ## Create a .NET Core Project
