@@ -104,7 +104,12 @@ After using the Azure Portal's **Data Explorer** to query an Azure Cosmos DB con
     ```csharp
     private static readonly string _primaryKey = "elzirrKCnXlacvh1CRAnQdYVbVLspmYHQyYrhx0PltHi8wn5lHVHFnd1Xm3ad5cn4TUcH4U0MSeHsVykkFPHpQ==";
     ```
-    
+
+## Understanding the point reads and queries in Azure Cosmos DB
+
+1. Point reads - It is a key/value lookup on a single item ID and partition key. The item ID and partition key combination is the key and the item itself is the value. For a 1 KB document, point reads typically cost 1 request unit with a latency under 10 ms. Point reads return a single whole item, not a partial item or a specific field.
+
+1. Queries - It is a query data by writing queries using the Structured Query Language (SQL) as a JSON query language. Queries always cost at least 2.3 request units and, in general, will have a higher and more variable latency than point reads. Queries can return many items.
 
 ## Read a single Document in Azure Cosmos DB Using ReadItemAsync
 
