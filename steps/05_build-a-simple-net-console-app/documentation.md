@@ -242,7 +242,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
                 MaxItemCount = 1
             }))
         {
-            // Execute query and get 1 item in the results. Then, get a continuation token to resume later
+            
             while (resultSetIterator.HasMoreResults)
             {
                 FeedResponse<Food> response = await resultSetIterator.ReadNextAsync();
@@ -252,22 +252,18 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
                 {
                     Console.WriteLine($"\nQueryWithContinuationTokens Diagnostics: {response.Diagnostics.ToString()}");
                 }
-
-                // Get continuation token once we've gotten > 0 results. 
+               
                 if (response.Count > 0)
                 {
                     continuation = response.ContinuationToken;
                     break;
                 }
             }
-        }
-        // Check if query has already been fully drained
+        }       
         if (continuation == null)
         {
             return;
-        }
-
-        // Resume query using continuation token
+        }        
         using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
                 query,
                 requestOptions: new QueryRequestOptions()
@@ -290,7 +286,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
         }
     ```
     
-1. In the below code to Execute query and get 1 item in the results. Then, get a continuation token to resume later.
+1. In the below code to Execute query and get one item in the results. Then, get a continuation token to resume later.
    
    ```csharp
    using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
@@ -327,7 +323,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
             return;
         }
     ```
-1. In the following code ContinuationToken is not null, Resume query using continuation token and getting the result.
+1. In the following code ContinuationToken is not null, Resume query using continuation token and getting the result using a while loop.
 
      ```csharp
     using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
