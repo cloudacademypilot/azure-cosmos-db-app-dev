@@ -188,6 +188,12 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 
 ## Read a single Documents in Azure Cosmos DB Using Queries
 
+1. Find the last line of code you wrote.
+ 
+    ```csharp   
+    Container container = database.GetContainer(_containerId);
+    ```
+
 1. Add the following lines of code to use the retrieve a single items from your Cosmos DB by its `id` and write its description,manufactureName to the console.
 
     ```csharp
@@ -227,6 +233,12 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
    ```
 
 ## Read a multiple Documents in Azure Cosmos DB Using Queries
+
+1. Find the last line of code you wrote.
+ 
+    ```csharp   
+    Container container = database.GetContainer(_containerId);
+    ```
 
 1. Add the following lines of code to retrieve a Multiple items from your Cosmos DB using select query and write its description,manufactureName to the console.
 
