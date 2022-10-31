@@ -107,13 +107,14 @@ After using the Azure Portal's **Data Explorer** to query an Azure Cosmos DB con
     private static readonly string _primaryKey = "elzirrKCnXlacvh1CRAnQdYVbVLspmYHQyYrhx0PltHi8wn5lHVHFnd1Xm3ad5cn4TUcH4U0MSeHsVykkFPHpQ==";
     ```
 
-## Understanding the point reads and queries in Azure Cosmos DB
+## Point reads, writes and queries in Azure Cosmos DB
+There are essentially two ways to read data in Azure CosmosDB - point reads and queries. Generally speaking, these two has different performance characterestics and request charges. In many cases, you can make simple changes in your app to rewrite simple queries as point reads. Most read-heavy workloads on Azure Cosmos DB use a combination of both point reads and SQL queries. If you just need to read a single item, point reads are cheaper and faster than queries. Point reads can read the data directly and don’t require the query engine. 
 
-1. **Point reads** - It is a key/value lookup on a single item ID and partition key. The item ID and partition key combination is the key and the item itself is the value. For a 1 KB document, point reads typically cost 1 request unit with a latency under 10 ms. Point reads return a single whole item, not a partial item or a specific field.
+Point reads are essentially key-value lookup on a single item ID and partition key. The item ID and partition key combination is the key and the item itself is the value. For a 1 KB document, point reads typically cost 1 request unit with a latency under 10 ms. Point reads return a single whole item, not a partial item or a specific field. Point writes works in a similary way - you will use the item id and partition key to write the item to the database.
 
-1. **Queries** - It is a query data by writing queries using the Structured Query Language (SQL) as a JSON query language. Queries always cost at least 2.3 request units and, in general, will have a higher and more variable latency than point reads. Queries can return many items.
+You can query data by writing queries using the Structured Query Language (SQL) as a JSON query language. Queries always cost at least 2.3 request units and, in general, will have a higher and more variable latency than point reads. However, in costrast to point reads queries can return many items.
 
-## Read a single Document in Azure Cosmos DB Using ReadItemAsync
+## Read a single Document in Azure Cosmos DB Using ReadItemAsync(Point Read)
 
 ReadItemAsync allows a single item to be retrieved from Cosmos DB by its ID. In Azure Cosmos DB, this is the most efficient method of reading a single document.
 
@@ -145,7 +146,7 @@ ReadItemAsync allows a single item to be retrieved from Cosmos DB by its ID. In 
    ```sh
    Read Candies, HERSHEY''S POT OF GOLD Almond Bar
    ```
-## Write a single Document in Azure Cosmos DB Using UpsertItemAsync
+## Write a single Document in Azure Cosmos DB Using UpsertItemAsync(Point Write)
 
 UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Azure Cosmos DB, this is the most efficient method of writing a single document.
 
@@ -188,7 +189,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
    Read Candies, HERSHEY''S POT OF GOLD Almond Bar-1
    ```
 
-## Read a single Documents in Azure Cosmos DB Using Queries
+## Read single Documents in Azure Cosmos DB using queries
 
 1. Find the last line of code you wrote.
  
@@ -320,6 +321,8 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
                     Console.WriteLine($"\nQueryWithContinuationTokens Diagnostics: {response.Diagnostics.ToString()}");
                 }
     ```
+    > Continuation tokens helps you to bookmark for your query's progress. Azure Cosmos DB query executions are stateless at the server side and can be resumed at any time using the continuation token.  
+
  1. Add the following lines of code to get continuation token once we havve gotten > 0 results.
 
     ```csharp
