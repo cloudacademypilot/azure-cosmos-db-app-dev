@@ -29,8 +29,15 @@ After using the Azure Portal's **Data Explorer** to query an Azure Cosmos DB con
     ```sh
     dotnet new console
     ```
-
-    > This command will create a new .NET Core project. The project will be a **console** project.
+    
+    > This command will create a new .NET Core project. The project will be a **console** project and it creates Program.cs file.
+    
+    > You will see the below code in Program.cs and make sure you delete the existing below lines .
+    
+    ```sh
+       //See https://aka.ms/new-console-template for more information 
+       Console.WriteLine("Hello, World!"); 
+    ```
 
 5. Visual Studio Code will most likely prompt you to install various extensions related to **.NET Core** or **Azure Cosmos DB** development. None of these extensions are required to complete the labs.
 
@@ -159,21 +166,21 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 1. Add the following lines of code to use the `UpsertItemAsync()` function to write a single item from your Cosmos DB by its `id` and write its description to the console.
 
     ```csharp
-        await Console.Out.WriteLineAsync($"Existing ETag:\t{response.ETag}");       
-        ItemRequestOptions requestOptions = new ItemRequestOptions { IfMatchEtag = response.ETag };  
-        candy.description = "Candies, HERSHEY'S POT OF GOLD Almond Bar-1";       
-        response = await container.UpsertItemAsync(candy, requestOptions: requestOptions);    
+        await Console.Out.WriteLineAsync($"Existing ETag:\t{candyResponse.ETag}");       
+        ItemRequestOptions requestOptions = new ItemRequestOptions { IfMatchEtag = candyResponse.ETag };  
+        candy.Description = "Candies, HERSHEY'S POT OF GOLD Almond Bar";       
+        candyResponse = await container.UpsertItemAsync(candy, requestOptions: requestOptions);    
 
-        try
-        {
-            response = await container.UpsertItemAsync(candy, new PartitionKey(candy.foodGroup));
-            Console.WriteLine($"Write { candy.description}");
+    try
+    {
+        candyResponse = await container.UpsertItemAsync(candy, new PartitionKey(candy.foodGroup));
+        Console.WriteLine($"Write { candy.Description}");
 
-        }
-        catch (Exception ex)
-        {
-            await Console.Out.WriteLineAsync($"Update error:\t{ex.Message}");
-        }
+    }
+    catch (Exception ex)
+    {
+        await Console.Out.WriteLineAsync($"Update error:\t{ex.Message}");
+    }
     ```
 1. Save all of your open tabs in Visual Studio Code
 
