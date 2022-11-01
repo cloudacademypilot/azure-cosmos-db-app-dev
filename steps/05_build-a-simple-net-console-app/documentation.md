@@ -67,7 +67,7 @@ After using the Azure Portal's **Data Explorer** to query an Azure Cosmos DB con
 
 8. In the **Explorer** pane verify that you have a `DataTypes.cs` file in your project folder.
 
-   > This file contains the data classes you will be working with in the following steps.
+   > This file contains the data classes you will be working with in the following steps.If it is not in your project folder, you can copy it from this path in the cloned repo here `C:\Labs\setup\templates\Lab05\DataTypes.cs`   
 
 9. Select the `Program.cs` link in the **Explorer** pane to open the file in the editor.
 
@@ -168,7 +168,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
     ```csharp
         await Console.Out.WriteLineAsync($"Existing ETag:\t{candyResponse.ETag}");       
         ItemRequestOptions requestOptions = new ItemRequestOptions { IfMatchEtag = candyResponse.ETag };  
-        candy.Description = "Candies, HERSHEY'S POT OF GOLD Almond Bar";       
+        candy.Description = "Candies, HERSHEY'S POT OF GOLD Almond Bar-1";       
         candyResponse = await container.UpsertItemAsync(candy, requestOptions: requestOptions);    
 
     try
@@ -204,21 +204,24 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
     Container container = database.GetContainer(_containerId);
     ```
 
-1. Add the following lines of code to use the retrieve a single items from your Cosmos DB by its `id` and write its description,manufactureName to the console.
+1. Add the following lines of code to use the retrieve a single items from your Cosmos DB by its `id` and `foodGroup` and write its description,manufactureName to the console.
 
     ```csharp
      var parameterizedQuery = new QueryDefinition(
-        query: "SELECT * FROM food p WHERE p.id = @id"
+        query: "SELECT * FROM food p WHERE p.id = @id and  p.foodGroup=@PartitionKey"
         )
-        .WithParameter("@id", "08116");
+        .WithParameter("@id", "08116")
+        .WithParameter("@PartitionKey", "Breakfast Cereals");
+
         using FeedIterator<Food> filteredFeed = container.GetItemQueryIterator<Food>(
            queryDefinition: parameterizedQuery
-         );
-        FeedResponse<Food> response = await filteredFeed.ReadNextAsync(); 
+       );
+
+        FeedResponse<Food> response = await filteredFeed.ReadNextAsync();
         foreach (Food item in response)
         {
-            await Console.Out.WriteLineAsync($"Read {item.description} by {item.manufacturerName}");
-        }  
+            await Console.Out.WriteLineAsync($"Read {item.Description} by {item.ManufacturerName}");
+        } 
     ``` 
 1. the following foreach block to iterate over the reponse items:
    
