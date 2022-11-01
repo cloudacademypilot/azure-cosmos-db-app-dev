@@ -253,7 +253,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
     Container container = database.GetContainer(_containerId);
     ```
 
-1. Add the following lines of code to retrieve a Multiple items from your Cosmos DB using select query and write its description,manufactureName to the console.
+1. Add the following lines of code to retrieve a Multiple items from your Cosmos DB using select query and write its Diagnostics to the console.
 
     ```csharp
       QueryDefinition query = new QueryDefinition("SELECT * FROM food");
@@ -381,11 +381,9 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
    ```sh
    dotnet run
    ```
-1. You should see the following line output in the console, indicating that `ReadItem` completed successfully:
+1. You should see the following  output in the Terminal, indicating that `Reading Diagnostics` completed successfully:
 
-   ```sh
-   Read Cereals, MALT-O-MEAL, original, plain, dry by MOM Brands
-   ```
+    ![Reading multipledocuments](./assets/05_Diagnostics.jpg "Output reading multiple documents")
    
 ## Execute a Query Against a Single Azure Cosmos DB Partition
 
