@@ -132,7 +132,7 @@ ReadItemAsync allows a single item to be retrieved from Cosmos DB by its ID. In 
     Container container = database.GetContainer(_containerId);
     ```
 
-1. Add the following lines of code to use the `ReadItemAsync()` function to retrieve a single item from your Cosmos DB by its `id` and write its description to the console.
+1. Add the following lines of code to use the `ReadItemAsync()` function to retrieve a single item from your Cosmos DB by its `id` and `foodGroup`, write its description to the console.
 
     ```csharp
     ItemResponse<Food> candyResponse = await container.ReadItemAsync<Food>("19130", new PartitionKey("Sweets"));
@@ -204,7 +204,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
     Container container = database.GetContainer(_containerId);
     ```
 
-1. Add the following lines of code to use the retrieve a single items from your Cosmos DB by its `id` and `foodGroup` and write its description,manufactureName to the console.
+1. Add the following lines of code to use the retrieve a single items from your Cosmos DB by its `id` and `foodGroup`, write its description,manufactureName to the console.
 
     ```csharp
      var parameterizedQuery = new QueryDefinition(
