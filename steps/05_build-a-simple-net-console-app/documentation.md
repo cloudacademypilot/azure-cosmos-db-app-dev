@@ -519,7 +519,7 @@ public class Program
            Console.Out.WriteLine($"---Page #{++pageCount:0000}---");
            foreach (var food in await queryB.ReadNextAsync())
            {
-        Console.Out.WriteLine($"\t[{food.Id}]\t{food.Description,-20}\t{food.ManufacturerName,-40}");
+        Console.Out.WriteLine($"\t[{food.id}]\t{food.Description,-20}\t{food.ManufacturerName,-40}");
          }
        }
      }
