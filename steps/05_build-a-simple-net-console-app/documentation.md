@@ -12,7 +12,7 @@ After using the Azure Portal's **Data Explorer** to query an Azure Cosmos DB con
 
 ## Create a .NET Core Project
 
-1. Open File explorer, navigate to C:\Users\cosmosLabUser\Desktop location and create Lab05 folder that will be used to contain the content of your .NET Core project.
+1. Open File explorer, navigate to **C:\Users\cosmosLabUser\Desktop** location and create **Lab05** folder that will be used to contain the content of your .NET Core project.
 
 2. In the `Lab05` folder, right-click the folder and select the **Open with Code** menu option.
 
@@ -212,6 +212,46 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
     }
     ```
 1. Save all of your open tabs in Visual Studio Code
+
+1. Now your Program.cs file should look like this:
+   ```csharp    
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Microsoft.Azure.Cosmos;
+
+    public class Program
+    {
+      private static readonly string _endpointUri = "<your uri>";
+      private static readonly string _primaryKey = "<your key>";
+      private static readonly string _databaseId = "NutritionDatabase";
+      private static readonly string _containerId = "FoodCollection";
+      private static CosmosClient _client = new CosmosClient(_endpointUri, _primaryKey);
+
+     public static async Task Main(string[] args)
+     {
+           Database database = _client.GetDatabase(_databaseId);
+           Container container = database.GetContainer(_containerId);            
+            ItemResponse<Food> candyResponse = await container.ReadItemAsync<Food>("19130", new PartitionKey("Sweets")); 
+            Food candy = candyResponse.Resource;
+            Console.Out.WriteLine($"Read {candy.description}"); 
+            await Console.Out.WriteLineAsync($"Existing ETag:\t{candyResponse.ETag}");       
+            ItemRequestOptions requestOptions = new ItemRequestOptions { IfMatchEtag = candyResponse.ETag };  
+            candy.description = "Candies, HERSHEY'S POT OF GOLD Almond Bar-1";       
+            candyResponse = await container.UpsertItemAsync(candy, requestOptions: requestOptions);
+           try
+           {
+   -       candyResponse = await container.UpsertItemAsync(candy, new PartitionKey(candy.foodGroup));
+           Console.WriteLine($"Write { candy.description}");
+           }
+          catch (Exception ex)
+          {
+          await Console.Out.WriteLineAsync($"Update error:\t{ex.Message}");
+          }
+      }
+    }
+    ```
 
 1. In the open terminal pane, enter and execute the following command:
 
