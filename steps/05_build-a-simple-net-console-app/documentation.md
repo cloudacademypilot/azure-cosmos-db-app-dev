@@ -137,7 +137,7 @@ ReadItemAsync allows a single item to be retrieved from Cosmos DB by its ID. In 
     ```csharp
     ItemResponse<Food> candyResponse = await container.ReadItemAsync<Food>("19130", new PartitionKey("Sweets"));
     Food candy = candyResponse.Resource;
-    Console.Out.WriteLine($"Read {candy.Description}");
+    Console.Out.WriteLine($"Read {candy.description}");
     ```
 
 1. Save all of your open tabs in Visual Studio Code
@@ -168,13 +168,13 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
     ```csharp
         await Console.Out.WriteLineAsync($"Existing ETag:\t{candyResponse.ETag}");       
         ItemRequestOptions requestOptions = new ItemRequestOptions { IfMatchEtag = candyResponse.ETag };  
-        candy.Description = "Candies, HERSHEY'S POT OF GOLD Almond Bar-1";       
+        candy.description = "Candies, HERSHEY'S POT OF GOLD Almond Bar-1";       
         candyResponse = await container.UpsertItemAsync(candy, requestOptions: requestOptions);    
 
     try
     {
         candyResponse = await container.UpsertItemAsync(candy, new PartitionKey(candy.foodGroup));
-        Console.WriteLine($"Write { candy.Description}");
+        Console.WriteLine($"Write { candy.description}");
 
     }
     catch (Exception ex)
@@ -304,7 +304,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
                 results.AddRange(response);
                 foreach (var stritem in results)
                 {
-                    await Console.Out.WriteLineAsync($"Read {stritem.Description} by {stritem.ManufacturerName}");
+                    await Console.Out.WriteLineAsync($"Read {stritem.id} {stritem.description} by {stritem.manufacturerName}");
 
                 } 
             }
