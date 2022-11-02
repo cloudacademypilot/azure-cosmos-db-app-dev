@@ -611,7 +611,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
    foreach (Food food in await queryA.ReadNextAsync())
    {
        await Console.Out.WriteLineAsync($"{food.description} by {food.manufacturerName}");
-       foreach (Serving serving in food.Servings)
+       foreach (Serving serving in food.servings)
        {
            await Console.Out.WriteLineAsync($"\t{serving.Amount} {serving.Description}");
        }
@@ -705,7 +705,7 @@ public class Program
          foreach (Food food in await queryA.ReadNextAsync())
          {
          await Console.Out.WriteLineAsync($"{food.description} by {food.manufacturerName}");
-         foreach (Serving serving in food.Servings)
+         foreach (Serving serving in food.servings)
          {
         await Console.Out.WriteLineAsync($"\t{serving.Amount} {serving.Description}");
          }
