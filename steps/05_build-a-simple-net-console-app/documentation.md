@@ -235,7 +235,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 
 1. Now your Program.cs file should look like this:
 
-  ```csharp   
+    ```csharp   
          using System;
          using System.Collections.Generic;
          using System.Linq;
@@ -274,7 +274,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 
         }
        }
-  ```
+    ```
 
 1. In the open terminal pane, enter and execute the following command:
 
