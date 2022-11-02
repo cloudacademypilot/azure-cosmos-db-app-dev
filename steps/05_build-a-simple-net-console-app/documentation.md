@@ -490,6 +490,32 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
     ```
 1. Save all of your open tabs in Visual Studio Code
 
+1. Now your Program.cs file should look like this:
+
+   ```csharp
+    using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
+                query,
+                requestOptions: new QueryRequestOptions()
+                {
+                    MaxItemCount = -1
+                },
+                continuationToken: continuation))
+        {
+            while (resultSetIterator.HasMoreResults)
+            {
+                FeedResponse<Food> response = await resultSetIterator.ReadNextAsync();
+
+                results.AddRange(response);
+                foreach (var stritem in results)
+                {
+                    await Console.Out.WriteLineAsync($"Read {stritem.id} {stritem.description} by {stritem.manufacturerName}");
+
+                }
+            }
+           
+        }
+    ```
+
 1. In the open terminal pane, enter and execute the following command:
 
    ```sh
@@ -498,13 +524,14 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 1. You should see the following  output in the Console, indicating that `ReadItems` completed successfully:
 
    ```sh
-   Read PACE, Tequila Lime Salsa by Campbell Soup Co.
-   Read PACE, Triple Pepper Salsa by Campbell Soup Co.
-   Read CAMPBELL'S Red and White, Lentil Soup, condensed by Campbell Soup Co.
-   Read PREGO Pasta, Heart Smart- Traditional Sauce, ready-to-serve by Campbell Soup Co.
-   Read CAMPBELL'S, 98% Fat Free Cream of Mushroom Soup, condensed by Campbell Soup Co.
+   Read 36000 APPLEBEE'S, 9 oz house sirloin steak by Applebee's
+   Read 36001 APPLEBEE'S, Double Crunch Shrimp by Applebee's
+   Read 36002 APPLEBEE'S, french fries by Applebee's
+   Read 36003 APPLEBEE'S, KRAFT, Macaroni & Cheese, from kid's menu by Applebee's
+   Read 36004 APPLEBEE'S, mozzarella sticks by Applebee's
+   Read 36005 APPLEBEE'S, chicken tenders, from kids' menu by Applebee's
+   Read 36006 T.G.I. FRIDAY'S, FRIDAY'S Shrimp, breaded by T.G.I Friday's
    ```
-
    
 ## Execute a query against a single partition
 
