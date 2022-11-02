@@ -418,7 +418,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
    FeedIterator<Food> queryA = container.GetItemQueryIterator<Food>(new QueryDefinition(sqlA), requestOptions: new QueryRequestOptions{MaxConcurrency = 1});
    foreach (Food food in await queryA.ReadNextAsync())
    {
-       await Console.Out.WriteLineAsync($"{food.Description} by {food.ManufacturerName}");
+       await Console.Out.WriteLineAsync($"{food.description} by {food.manufacturerName}");
        foreach (Serving serving in food.Servings)
        {
            await Console.Out.WriteLineAsync($"\t{serving.Amount} {serving.Description}");
@@ -474,7 +474,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
         Console.Out.WriteLine($"---Page #{++pageCount:0000}---");
         foreach (var food in await queryB.ReadNextAsync())
         {
-            Console.Out.WriteLine($"\t[{food.Id}]\t{food.Description,-20}\t{food.ManufacturerName,-40}");
+            Console.Out.WriteLine($"\t[{food.Id}]\t{food.description,-20}\t{food.manufacturerName,-40}");
         }
     }
     ```
@@ -506,13 +506,13 @@ public class Program
 
         ItemResponse<Food> candyResponse = await container.ReadItemAsync<Food>("19130", new PartitionKey("Sweets"));
         Food candy = candyResponse.Resource;
-         Console.Out.WriteLine($"Read {candy.Description}");
+         Console.Out.WriteLine($"Read {candy.description}");
 
          string sqlA = "SELECT f.description, f.manufacturerName, f.servings FROM foods f WHERE f.foodGroup = 'Sweets' and IS_DEFINED(f.description) and IS_DEFINED(f.manufacturerName) and IS_DEFINED(f.servings)";
         FeedIterator<Food> queryA = container.GetItemQueryIterator<Food>(new QueryDefinition(sqlA), requestOptions: new QueryRequestOptions{MaxConcurrency = 1});
          foreach (Food food in await queryA.ReadNextAsync())
          {
-         await Console.Out.WriteLineAsync($"{food.Description} by {food.ManufacturerName}");
+         await Console.Out.WriteLineAsync($"{food.description} by {food.manufacturerName}");
          foreach (Serving serving in food.Servings)
          {
         await Console.Out.WriteLineAsync($"\t{serving.Amount} {serving.Description}");
@@ -528,7 +528,7 @@ public class Program
            Console.Out.WriteLine($"---Page #{++pageCount:0000}---");
            foreach (var food in await queryB.ReadNextAsync())
            {
-        Console.Out.WriteLine($"\t[{food.id}]\t{food.Description,-20}\t{food.ManufacturerName,-40}");
+        Console.Out.WriteLine($"\t[{food.id}]\t{food.description,-20}\t{food.manufacturerName,-40}");
          }
        }
      }
