@@ -401,7 +401,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 1. Find the last line of code you wrote:
 
     ```csharp
-    Console.Out.WriteLine($"Read {candy.Description}");
+    Console.Out.WriteLine($"Read {candy.description}");
     ```
 
 1. Create a SQL Query against your data, as follows:
@@ -474,7 +474,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
         Console.Out.WriteLine($"---Page #{++pageCount:0000}---");
         foreach (var food in await queryB.ReadNextAsync())
         {
-            Console.Out.WriteLine($"\t[{food.Id}]\t{food.description,-20}\t{food.manufacturerName,-40}");
+            Console.Out.WriteLine($"\t[{food.id}]\t{food.description,-20}\t{food.manufacturerName,-40}");
         }
     }
     ```
