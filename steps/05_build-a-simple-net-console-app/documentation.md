@@ -142,6 +142,35 @@ ReadItemAsync allows a single item to be retrieved from Cosmos DB by its ID. In 
 
 1. Save all of your open tabs in Visual Studio Code
 
+1. Now your Program.cs file should look like this:
+   ```csharp    
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Microsoft.Azure.Cosmos;
+
+    public class Program
+   {
+      private static readonly string _endpointUri = "<your uri>";
+      private static readonly string _primaryKey = "<your key>";
+      private static readonly string _databaseId = "NutritionDatabase";
+      private static readonly string _containerId = "FoodCollection";
+      private static CosmosClient _client = new CosmosClient(_endpointUri, _primaryKey);
+
+     public static async Task Main(string[] args)
+     {
+
+           Database database = _client.GetDatabase(_databaseId);
+           Container container = database.GetContainer(_containerId);            
+            ItemResponse<Food> candyResponse = await container.ReadItemAsync<Food>("19130", new PartitionKey("Sweets")); 
+            Food candy = candyResponse.Resource;
+            Console.Out.WriteLine($"Read {candy.description}"); 
+
+      }
+    }
+    ```
+
 1. In the open terminal pane, enter and execute the following command:
 
    ```sh
@@ -244,8 +273,8 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 
          public class Program
          {
-            private static readonly string _endpointUri = "";
-            private static readonly string _primaryKey = "";
+            private static readonly string _endpointUri = "<your uri>";
+            private static readonly string _primaryKey = "<your key>";
             private static readonly string _databaseId = "NutritionDatabase";
             private static readonly string _containerId = "FoodCollection";
             private static CosmosClient _client = new CosmosClient(_endpointUri, _primaryKey);
