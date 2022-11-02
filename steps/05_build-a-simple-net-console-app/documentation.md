@@ -12,7 +12,7 @@ After using the Azure Portal's **Data Explorer** to query an Azure Cosmos DB con
 
 ## Create a .NET Core Project
 
-1. Create `Lab05` folder that will be used to contain the content of your .NET Core project.
+1. Open File explorer, navigate to C:\Users\cosmosLabUser\Desktop location and create Lab05 folder that will be used to contain the content of your .NET Core project.
 
 2. In the `Lab05` folder, right-click the folder and select the **Open with Code** menu option.
 
@@ -302,10 +302,11 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
                 FeedResponse<Food> response = await resultSetIterator.ReadNextAsync();
 
                 results.AddRange(response);
-                if (response.Diagnostics != null)
+                foreach (var stritem in results)
                 {
-                    Console.WriteLine($"\nQueryWithContinuationTokens Diagnostics: {response.Diagnostics.ToString()}");
-                }
+                    await Console.Out.WriteLineAsync($"Read {stritem.Description} by {stritem.ManufacturerName}");
+
+                } 
             }
            
         }
@@ -381,9 +382,16 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
    ```sh
    dotnet run
    ```
-1. You should see the following  output in the Terminal, indicating that `Reading Diagnostics` completed successfully:
+1. You should see the following  output in the Console, indicating that `ReadItem` completed successfully:
 
-    ![Reading multipledocuments](./assets/05_Diagnostics.jpg "Output reading multiple documents")
+   ```sh
+   Read PACE, Tequila Lime Salsa by Campbell Soup Co.
+   Read PACE, Triple Pepper Salsa by Campbell Soup Co.
+   Read CAMPBELL'S Red and White, Lentil Soup, condensed by Campbell Soup Co.
+   Read PREGO Pasta, Heart Smart- Traditional Sauce, ready-to-serve by Campbell Soup Co.
+   Read CAMPBELL'S, 98% Fat Free Cream of Mushroom Soup, condensed by Campbell Soup Co.
+   ```
+
    
 ## Execute a query against a single partition
 
