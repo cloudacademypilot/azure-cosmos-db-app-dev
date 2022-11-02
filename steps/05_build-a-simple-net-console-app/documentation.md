@@ -385,7 +385,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 
     ![Reading multipledocuments](./assets/05_Diagnostics.jpg "Output reading multiple documents")
    
-## Execute query against a single partition
+## Execute a query against a single partition
 
 1. Return to `program.cs` file editor window
 
@@ -438,7 +438,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
     ...
     ```
 
-### Execute query against multiple partitions
+### Execute a query against multiple partitions
 
 1. Return to `program.cs` file editor window
 
