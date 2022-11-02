@@ -220,7 +220,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
         FeedResponse<Food> response = await filteredFeed.ReadNextAsync();
         foreach (Food item in response)
         {
-            await Console.Out.WriteLineAsync($"Read {item.Description} by {item.ManufacturerName}");
+            await Console.Out.WriteLineAsync($"Read {item.description} by {item.manufacturerName}");
         } 
     ``` 
 1. the following foreach block to iterate over the reponse items:
@@ -367,9 +367,10 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
                 FeedResponse<Food> response = await resultSetIterator.ReadNextAsync();
 
                 results.AddRange(response);
-                if (response.Diagnostics != null)
+                foreach (var stritem in results)
                 {
-                    Console.WriteLine($"\nQueryWithContinuationTokens Diagnostics: {response.Diagnostics.ToString()}");
+                    await Console.Out.WriteLineAsync($"Read {stritem.id} {stritem.description} by {stritem.manufacturerName}");
+
                 }
             }
            
@@ -382,7 +383,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
    ```sh
    dotnet run
    ```
-1. You should see the following  output in the Console, indicating that `ReadItem` completed successfully:
+1. You should see the following  output in the Console, indicating that `ReadItems` completed successfully:
 
    ```sh
    Read PACE, Tequila Lime Salsa by Campbell Soup Co.
