@@ -492,29 +492,82 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 
 1. Now your Program.cs file should look like this:
 
-   ```csharp
+ ```csharp
+ using System;
+ using System.Collections.Generic;
+ using System.Linq;
+ using System.Threading.Tasks;
+ using Microsoft.Azure.Cosmos;
+ public class Program
+ {
+      private static readonly string _endpointUri = "<your uri>";
+      private static readonly string _primaryKey = "<your key>";
+      private static readonly string _databaseId = "NutritionDatabase";
+      private static readonly string _containerId = "FoodCollection";
+      private static CosmosClient _client = new CosmosClient(_endpointUri, _primaryKey);
+
+ public static async Task Main(string[] args)
+   {
+       Database database = _client.GetDatabase(_databaseId);
+       Container container = database.GetContainer(_containerId);
+        QueryDefinition query = new QueryDefinition("SELECT * FROM food");
+        string continuation = null;
+
+    List<Food> results = new List<Food>();
     using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
-                query,
-                requestOptions: new QueryRequestOptions()
-                {
-                    MaxItemCount = -1
-                },
-                continuationToken: continuation))
+        query,
+        requestOptions: new QueryRequestOptions()
         {
-            while (resultSetIterator.HasMoreResults)
+            MaxItemCount = 1
+        }))
+    {
+        
+        while (resultSetIterator.HasMoreResults)
+        {
+            FeedResponse<Food> response = await resultSetIterator.ReadNextAsync();
+
+            results.AddRange(response);
+            if (response.Diagnostics != null)
             {
-                FeedResponse<Food> response = await resultSetIterator.ReadNextAsync();
-
-                results.AddRange(response);
-                foreach (var stritem in results)
-                {
-                    await Console.Out.WriteLineAsync($"Read {stritem.id} {stritem.description} by {stritem.manufacturerName}");
-
-                }
+                Console.WriteLine($"\nQueryWithContinuationTokens Diagnostics: {response.Diagnostics.ToString()}");
             }
            
+            if (response.Count > 0)
+            {
+                continuation = response.ContinuationToken;
+                break;
+            }
         }
-    ```
+    }       
+    if (continuation == null)
+    {
+        return;
+    }        
+    using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
+            query,
+            requestOptions: new QueryRequestOptions()
+            {
+                MaxItemCount = -1
+            },
+            continuationToken: continuation))
+    {
+        while (resultSetIterator.HasMoreResults)
+        {
+            FeedResponse<Food> response = await resultSetIterator.ReadNextAsync();
+
+            results.AddRange(response);
+            foreach (var stritem in results)
+            {
+                await Console.Out.WriteLineAsync($"Read {stritem.id} {stritem.description} by {stritem.manufacturerName}");
+
+            } 
+        }
+       
+    }
+              
+   }
+  }
+ ```
 
 1. In the open terminal pane, enter and execute the following command:
 
