@@ -5,10 +5,14 @@ After using the Azure Portal's **Data Explorer** to query an Azure Cosmos DB con
 ### Recommended Prerequisites 
 
 - [Use the Azure Cosmos DB SQL API SDK](https://learn.microsoft.com/en-gb/training/modules/use-azure-cosmos-db-sql-api-sdk/)
+- [Understanding the difference between point reads and queries in Azure Cosmos DB](https://devblogs.microsoft.com/cosmosdb/point-reads-versus-queries/)
+- [Reading data with Spring Data Azure Cosmos DB](https://devblogs.microsoft.com/cosmosdb/read-data-spring-azure-cosmos-db-v3/)
+- [Optimize request cost in Azure Cosmos DB](https://learn.microsoft.com/en-us/azure/cosmos-db/optimize-cost-reads-writes)
+- [Query items using a SQL query asynchronously](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-dotnet-query-items)
 
 ## Create a .NET Core Project
 
-1. Create `Lab05` folder that will be used to contain the content of your .NET Core project.
+1. Open File explorer, navigate to **C:\Users\cosmosLabUser\Desktop** location and create **Lab05** folder that will be used to contain the content of your .NET Core project.
 
 2. In the `Lab05` folder, right-click the folder and select the **Open with Code** menu option.
 
@@ -25,8 +29,15 @@ After using the Azure Portal's **Data Explorer** to query an Azure Cosmos DB con
     ```sh
     dotnet new console
     ```
-
-    > This command will create a new .NET Core project. The project will be a **console** project.
+    
+    > This command will create a new .NET Core project. The project will be a **console** project and it creates Program.cs file.
+    
+    > You will see the below code in Program.cs and make sure you delete the existing below lines .
+    
+    ```sh
+       //See https://aka.ms/new-console-template for more information 
+       Console.WriteLine("Hello, World!"); 
+    ```
 
 5. Visual Studio Code will most likely prompt you to install various extensions related to **.NET Core** or **Azure Cosmos DB** development. None of these extensions are required to complete the labs.
 
@@ -56,7 +67,7 @@ After using the Azure Portal's **Data Explorer** to query an Azure Cosmos DB con
 
 8. In the **Explorer** pane verify that you have a `DataTypes.cs` file in your project folder.
 
-   > This file contains the data classes you will be working with in the following steps.
+   > This file contains the data classes you will be working with in the following steps.If it is not in your project folder, you can copy it from this path in the cloned repo here `C:\Labs\setup\templates\Lab05\DataTypes.cs`   
 
 9. Select the `Program.cs` link in the **Explorer** pane to open the file in the editor.
 
@@ -102,9 +113,15 @@ After using the Azure Portal's **Data Explorer** to query an Azure Cosmos DB con
     ```csharp
     private static readonly string _primaryKey = "elzirrKCnXlacvh1CRAnQdYVbVLspmYHQyYrhx0PltHi8wn5lHVHFnd1Xm3ad5cn4TUcH4U0MSeHsVykkFPHpQ==";
     ```
-    
 
-## Read a single Document in Azure Cosmos DB Using ReadItemAsync
+## Point reads, writes and queries
+There are essentially two ways to read data in Azure CosmosDB - point reads and queries. Generally speaking, these two has different performance characterestics and request charges. In many cases, you can make simple changes in your app to rewrite simple queries as point reads. Most read-heavy workloads on Azure Cosmos DB use a combination of both point reads and SQL queries. If you just need to read a single item, point reads are cheaper and faster than queries. Point reads can read the data directly and don’t require the query engine. 
+
+Point reads are essentially key-value lookup on a single item ID and partition key. The item ID and partition key combination is the key and the item itself is the value. For a 1 KB document, point reads typically cost 1 request unit with a latency under 10 ms. Point reads return a single whole item, not a partial item or a specific field. Point writes works in a similary way - you will use the item id and partition key to write the item to the database.
+
+You can query data by writing queries using the Structured Query Language (SQL) as a JSON query language. Queries always cost at least 2.3 request units and, in general, will have a higher and more variable latency than point reads. However, in costrast to point reads queries can return many items.
+
+## Read a single document using ReadItemAsync(Point Read)
 
 ReadItemAsync allows a single item to be retrieved from Cosmos DB by its ID. In Azure Cosmos DB, this is the most efficient method of reading a single document.
 
@@ -115,15 +132,44 @@ ReadItemAsync allows a single item to be retrieved from Cosmos DB by its ID. In 
     Container container = database.GetContainer(_containerId);
     ```
 
-1. Add the following lines of code to use the `ReadItemAsync()` function to retrieve a single item from your Cosmos DB by its `id` and write its description to the console.
+1. Add the following lines of code to use the `ReadItemAsync()` function to retrieve a single item from your Cosmos DB by its `id` and `foodGroup`, write its description to the console.
 
     ```csharp
     ItemResponse<Food> candyResponse = await container.ReadItemAsync<Food>("19130", new PartitionKey("Sweets"));
     Food candy = candyResponse.Resource;
-    Console.Out.WriteLine($"Read {candy.Description}");
+    Console.Out.WriteLine($"Read {candy.description}");
     ```
 
 1. Save all of your open tabs in Visual Studio Code
+
+1. Now your Program.cs file should look like this:
+   ```csharp    
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Microsoft.Azure.Cosmos;
+
+    public class Program
+   {
+      private static readonly string _endpointUri = "<your uri>";
+      private static readonly string _primaryKey = "<your key>";
+      private static readonly string _databaseId = "NutritionDatabase";
+      private static readonly string _containerId = "FoodCollection";
+      private static CosmosClient _client = new CosmosClient(_endpointUri, _primaryKey);
+
+     public static async Task Main(string[] args)
+     {
+
+           Database database = _client.GetDatabase(_databaseId);
+           Container container = database.GetContainer(_containerId);            
+            ItemResponse<Food> candyResponse = await container.ReadItemAsync<Food>("19130", new PartitionKey("Sweets")); 
+            Food candy = candyResponse.Resource;
+            Console.Out.WriteLine($"Read {candy.description}"); 
+
+      }
+    }
+    ```
 
 1. In the open terminal pane, enter and execute the following command:
 
@@ -136,15 +182,420 @@ ReadItemAsync allows a single item to be retrieved from Cosmos DB by its ID. In 
    ```sh
    Read Candies, HERSHEY''S POT OF GOLD Almond Bar
    ```
+## Write a single document using UpsertItemAsync(Point Write)
 
-## Execute a Query Against a Single Azure Cosmos DB Partition
+UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Azure Cosmos DB, this is the most efficient method of writing a single document.
+
+1. Find the last line of code you wrote:
+   
+   ```csharp    
+    Console.Out.WriteLine($"Read {candy.description}");
+    ```
+   
+1. Add the following lines of code to use the `UpsertItemAsync()` function to write a single item from your Cosmos DB by its `id` and write its description to the console.
+
+    ```csharp
+        await Console.Out.WriteLineAsync($"Existing ETag:\t{candyResponse.ETag}");       
+        ItemRequestOptions requestOptions = new ItemRequestOptions { IfMatchEtag = candyResponse.ETag };  
+        candy.description = "Candies, HERSHEY'S POT OF GOLD Almond Bar-1";       
+        candyResponse = await container.UpsertItemAsync(candy, requestOptions: requestOptions);    
+
+    try
+    {
+        candyResponse = await container.UpsertItemAsync(candy, new PartitionKey(candy.foodGroup));
+        Console.WriteLine($"Write { candy.description}");
+
+    }
+    catch (Exception ex)
+    {
+        await Console.Out.WriteLineAsync($"Update error:\t{ex.Message}");
+    }
+    ```
+1. Save all of your open tabs in Visual Studio Code
+
+1. Now your Program.cs file should look like this:
+   ```csharp    
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Microsoft.Azure.Cosmos;
+
+    public class Program
+    {
+      private static readonly string _endpointUri = "<your uri>";
+      private static readonly string _primaryKey = "<your key>";
+      private static readonly string _databaseId = "NutritionDatabase";
+      private static readonly string _containerId = "FoodCollection";
+      private static CosmosClient _client = new CosmosClient(_endpointUri, _primaryKey);
+
+     public static async Task Main(string[] args)
+     {
+           Database database = _client.GetDatabase(_databaseId);
+           Container container = database.GetContainer(_containerId);            
+            ItemResponse<Food> candyResponse = await container.ReadItemAsync<Food>("19130", new PartitionKey("Sweets")); 
+            Food candy = candyResponse.Resource;
+            Console.Out.WriteLine($"Read {candy.description}"); 
+            await Console.Out.WriteLineAsync($"Existing ETag:\t{candyResponse.ETag}");       
+            ItemRequestOptions requestOptions = new ItemRequestOptions { IfMatchEtag = candyResponse.ETag };  
+            candy.description = "Candies, HERSHEY'S POT OF GOLD Almond Bar-1";       
+            candyResponse = await container.UpsertItemAsync(candy, requestOptions: requestOptions);
+           try
+           {
+   -       candyResponse = await container.UpsertItemAsync(candy, new PartitionKey(candy.foodGroup));
+           Console.WriteLine($"Write { candy.description}");
+           }
+          catch (Exception ex)
+          {
+          await Console.Out.WriteLineAsync($"Update error:\t{ex.Message}");
+          }
+      }
+    }
+    ```
+
+1. In the open terminal pane, enter and execute the following command:
+
+   ```sh
+   dotnet run
+   ```
+
+1. You should see the following line output in the console, indicating that `UpsertItemAsync()` completed successfully:
+
+   ```sh
+   Read Candies, HERSHEY''S POT OF GOLD Almond Bar-1
+   ```
+
+## Read single document using queries
+
+1. Find the last line of code you wrote.
+ 
+    ```csharp   
+    Container container = database.GetContainer(_containerId);
+    ```
+
+1. Add the following lines of code to use the retrieve a single items from your Cosmos DB by its `id` and `foodGroup`, write its description,manufactureName to the console.
+
+    ```csharp
+     var parameterizedQuery = new QueryDefinition(
+        query: "SELECT * FROM food p WHERE p.id = @id and  p.foodGroup=@PartitionKey"
+        )
+        .WithParameter("@id", "08116")
+        .WithParameter("@PartitionKey", "Breakfast Cereals");
+
+        using FeedIterator<Food> filteredFeed = container.GetItemQueryIterator<Food>(
+           queryDefinition: parameterizedQuery
+       );
+
+        FeedResponse<Food> response = await filteredFeed.ReadNextAsync();
+        foreach (Food item in response)
+        {
+            await Console.Out.WriteLineAsync($"Read {item.description} by {item.manufacturerName}");
+        } 
+    ``` 
+1. the following foreach block to iterate over the reponse items:
+   
+   ```sh
+   foreach (Food item in response)
+   {
+   }
+   ```   
+
+1. Save all of your open tabs in Visual Studio Code
+
+1. Now your Program.cs file should look like this:
+
+    ```csharp   
+         using System;
+         using System.Collections.Generic;
+         using System.Linq;
+         using System.Threading.Tasks;
+         using Microsoft.Azure.Cosmos;
+
+         public class Program
+         {
+            private static readonly string _endpointUri = "<your uri>";
+            private static readonly string _primaryKey = "<your key>";
+            private static readonly string _databaseId = "NutritionDatabase";
+            private static readonly string _containerId = "FoodCollection";
+            private static CosmosClient _client = new CosmosClient(_endpointUri, _primaryKey);
+
+         public static async Task Main(string[] args)
+         {
+
+           Database database = _client.GetDatabase(_databaseId);
+           Container container = database.GetContainer(_containerId);
+
+                   var parameterizedQuery = new QueryDefinition(
+          query: "SELECT * FROM food p WHERE p.id = @id and  p.foodGroup=@PartitionKey"
+          )
+          .WithParameter("@id", "08116")
+          .WithParameter("@PartitionKey", "Breakfast Cereals");
+
+          using FeedIterator<Food> filteredFeed = container.GetItemQueryIterator<Food>(
+             queryDefinition: parameterizedQuery
+         );
+
+          FeedResponse<Food> response = await filteredFeed.ReadNextAsync();
+          foreach (Food item in response)
+          {
+              await Console.Out.WriteLineAsync($"Read {item.description} by {item.manufacturerName}");
+          }   
+
+        }
+       }
+    ```
+
+1. In the open terminal pane, enter and execute the following command:
+
+   ```sh
+   dotnet run
+   ```
+
+1. You should see the following line output in the console, indicating that `ReadItem` completed successfully:
+
+   ```sh
+   Read Cereals, MALT-O-MEAL, original, plain, dry by MOM Brands
+   ```
+
+## Read multiple documents using queries
+
+1. Find the last line of code you wrote.
+ 
+    ```csharp   
+    Container container = database.GetContainer(_containerId);
+    ```
+
+1. Add the following lines of code to retrieve a Multiple items from your Cosmos DB using select query and write its Diagnostics to the console.
+
+    ```csharp
+      QueryDefinition query = new QueryDefinition("SELECT * FROM food");
+        string continuation = null;
+
+        List<Food> results = new List<Food>();
+        using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
+            query,
+            requestOptions: new QueryRequestOptions()
+            {
+                MaxItemCount = 1
+            }))
+        {
+            
+            while (resultSetIterator.HasMoreResults)
+            {
+                FeedResponse<Food> response = await resultSetIterator.ReadNextAsync();
+
+                results.AddRange(response);
+                foreach (var stroneitem in results)
+                {
+              await Console.Out.WriteLineAsync($"Read {stroneitem.id} {stroneitem.description} by {stroneitem.manufacturerName}");
+
+                } 
+               
+                if (response.Count > 0)
+                {
+                    continuation = response.ContinuationToken;
+                    break;
+                }
+            }
+        }       
+        if (continuation == null)
+        {
+            return;
+        }        
+        using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
+                query,
+                requestOptions: new QueryRequestOptions()
+                {
+                    MaxItemCount = -1
+                },
+                continuationToken: continuation))
+        {
+            while (resultSetIterator.HasMoreResults)
+            {
+                FeedResponse<Food> response = await resultSetIterator.ReadNextAsync();
+
+                results.AddRange(response);
+                foreach (var stritem in results)
+                {
+                    await Console.Out.WriteLineAsync($"Read {stritem.id} {stritem.description} by {stritem.manufacturerName}");
+
+                } 
+            }
+           
+        }
+    ```
+    
+1. In the below code to Execute query and get one item in the results. Then, get a continuation token to resume later.
+   
+   ```csharp
+   using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
+            query,
+            requestOptions: new QueryRequestOptions()
+            {
+                MaxItemCount = 1
+            }))
+        {
+     while (resultSetIterator.HasMoreResults)
+            {
+                FeedResponse<Food> response = await resultSetIterator.ReadNextAsync();
+
+                results.AddRange(response);
+                foreach (var stroneitem in results)
+               {
+              await Console.Out.WriteLineAsync($"Read {stroneitem.id} {stroneitem.description} by {stroneitem.manufacturerName}");
+
+               } 
+    ```
+    > Continuation tokens helps you to bookmark for your query's progress. Azure Cosmos DB query executions are stateless at the server side and can be resumed at any time using the continuation token.  
+
+ 1. Add the following lines of code to get continuation token once we havve gotten > 0 results.
+
+    ```csharp
+    if (response.Count > 0)
+        {
+          continuation = response.ContinuationToken;
+           break;
+         }
+    ```
+1. Add the following lines of code to check whether ContinuationToken is null or notnull, if null retrun to the process. 
+
+    ```csharp
+    if (continuation == null)
+        {
+            return;
+        }
+    ```
+1. In the following code ContinuationToken is not null, Resume query using continuation token and getting the result using a while loop.
+
+     ```csharp
+    using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
+                query,
+                requestOptions: new QueryRequestOptions()
+                {
+                    MaxItemCount = -1
+                },
+                continuationToken: continuation))
+        {
+            while (resultSetIterator.HasMoreResults)
+            {
+                FeedResponse<Food> response = await resultSetIterator.ReadNextAsync();
+
+                results.AddRange(response);
+                foreach (var stritem in results)
+                {
+                    await Console.Out.WriteLineAsync($"Read {stritem.id} {stritem.description} by {stritem.manufacturerName}");
+
+                }
+            }
+           
+        }
+    ```
+1. Save all of your open tabs in Visual Studio Code
+
+1. Now your Program.cs file should look like this:
+
+    ```csharp
+       using System;
+       using System.Collections.Generic;
+       using System.Linq;
+       using System.Threading.Tasks;
+       using Microsoft.Azure.Cosmos;
+       public class Program
+       {
+            private static readonly string _endpointUri = "<your uri>";
+            private static readonly string _primaryKey = "<your key>";
+            private static readonly string _databaseId = "NutritionDatabase";
+            private static readonly string _containerId = "FoodCollection";
+            private static CosmosClient _client = new CosmosClient(_endpointUri, _primaryKey);
+
+       public static async Task Main(string[] args)
+         {
+             Database database = _client.GetDatabase(_databaseId);
+             Container container = database.GetContainer(_containerId);
+              QueryDefinition query = new QueryDefinition("SELECT * FROM food");
+              string continuation = null;
+
+          List<Food> results = new List<Food>();
+          using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
+              query,
+              requestOptions: new QueryRequestOptions()
+              {
+                  MaxItemCount = 1
+              }))
+          {
+
+              while (resultSetIterator.HasMoreResults)
+              {
+                  FeedResponse<Food> response = await resultSetIterator.ReadNextAsync();
+
+                  results.AddRange(response);
+                  foreach (var stroneitem in results)
+                 {
+                  await Console.Out.WriteLineAsync($"Read {stroneitem.id} {stroneitem.description} by {stroneitem.manufacturerName}");
+
+                 } 
+                  if (response.Count > 0)
+                  {
+                      continuation = response.ContinuationToken;
+                      break;
+                  }
+              }
+          }       
+          if (continuation == null)
+          {
+              return;
+          }        
+          using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
+                  query,
+                  requestOptions: new QueryRequestOptions()
+                  {
+                      MaxItemCount = -1
+                  },
+                  continuationToken: continuation))
+          {
+              while (resultSetIterator.HasMoreResults)
+              {
+                  FeedResponse<Food> response = await resultSetIterator.ReadNextAsync();
+
+                  results.AddRange(response);
+                  foreach (var stritem in results)
+                  {
+                      await Console.Out.WriteLineAsync($"Read {stritem.id} {stritem.description} by {stritem.manufacturerName}");
+
+                  } 
+              }
+
+          }
+
+         }
+        }
+    ```
+
+1. In the open terminal pane, enter and execute the following command:
+
+   ```sh
+   dotnet run
+   ```
+1. You should see the following  output in the Console, indicating that `ReadItems` completed successfully:
+
+   ```sh
+   Read 36000 APPLEBEE'S, 9 oz house sirloin steak by Applebee's
+   Read 36001 APPLEBEE'S, Double Crunch Shrimp by Applebee's
+   Read 36002 APPLEBEE'S, french fries by Applebee's
+   Read 36003 APPLEBEE'S, KRAFT, Macaroni & Cheese, from kid's menu by Applebee's
+   Read 36004 APPLEBEE'S, mozzarella sticks by Applebee's
+   Read 36005 APPLEBEE'S, chicken tenders, from kids' menu by Applebee's
+   Read 36006 T.G.I. FRIDAY'S, FRIDAY'S Shrimp, breaded by T.G.I Friday's
+   ```
+   
+## Execute a query against a single partition
 
 1. Return to `program.cs` file editor window
 
 1. Find the last line of code you wrote:
 
     ```csharp
-    Console.Out.WriteLine($"Read {candy.Description}");
+    Console.Out.WriteLine($"Read {candy.description}");
     ```
 
 1. Create a SQL Query against your data, as follows:
@@ -161,8 +612,8 @@ ReadItemAsync allows a single item to be retrieved from Cosmos DB by its ID. In 
    FeedIterator<Food> queryA = container.GetItemQueryIterator<Food>(new QueryDefinition(sqlA), requestOptions: new QueryRequestOptions{MaxConcurrency = 1});
    foreach (Food food in await queryA.ReadNextAsync())
    {
-       await Console.Out.WriteLineAsync($"{food.Description} by {food.ManufacturerName}");
-       foreach (Serving serving in food.Servings)
+       await Console.Out.WriteLineAsync($"{food.description} by {food.manufacturerName}");
+       foreach (Serving serving in food.servings)
        {
            await Console.Out.WriteLineAsync($"\t{serving.Amount} {serving.Description}");
        }
@@ -190,7 +641,7 @@ ReadItemAsync allows a single item to be retrieved from Cosmos DB by its ID. In 
     ...
     ```
 
-### Execute a Query Against Multiple Azure Cosmos DB Partitions
+### Execute a query against multiple partitions
 
 1. Return to `program.cs` file editor window
 
@@ -217,7 +668,7 @@ ReadItemAsync allows a single item to be retrieved from Cosmos DB by its ID. In 
         Console.Out.WriteLine($"---Page #{++pageCount:0000}---");
         foreach (var food in await queryB.ReadNextAsync())
         {
-            Console.Out.WriteLine($"\t[{food.Id}]\t{food.Description,-20}\t{food.ManufacturerName,-40}");
+            Console.Out.WriteLine($"\t[{food.id}]\t{food.description,-20}\t{food.manufacturerName,-40}");
         }
     }
     ```
@@ -235,8 +686,8 @@ using Microsoft.Azure.Cosmos;
 
 public class Program
 {
-    private static readonly string _endpointUri = "";
-    private static readonly string _primaryKey = "";
+    private static readonly string _endpointUri = "<your uri>";
+    private static readonly string _primaryKey = "<your key>";
 
     private static readonly string _databaseId = "NutritionDatabase";
     private static readonly string _containerId = "FoodCollection";
@@ -249,14 +700,14 @@ public class Program
 
         ItemResponse<Food> candyResponse = await container.ReadItemAsync<Food>("19130", new PartitionKey("Sweets"));
         Food candy = candyResponse.Resource;
-         Console.Out.WriteLine($"Read {candy.Description}");
+         Console.Out.WriteLine($"Read {candy.description}");
 
          string sqlA = "SELECT f.description, f.manufacturerName, f.servings FROM foods f WHERE f.foodGroup = 'Sweets' and IS_DEFINED(f.description) and IS_DEFINED(f.manufacturerName) and IS_DEFINED(f.servings)";
         FeedIterator<Food> queryA = container.GetItemQueryIterator<Food>(new QueryDefinition(sqlA), requestOptions: new QueryRequestOptions{MaxConcurrency = 1});
          foreach (Food food in await queryA.ReadNextAsync())
          {
-         await Console.Out.WriteLineAsync($"{food.Description} by {food.ManufacturerName}");
-         foreach (Serving serving in food.Servings)
+         await Console.Out.WriteLineAsync($"{food.description} by {food.manufacturerName}");
+         foreach (Serving serving in food.servings)
          {
         await Console.Out.WriteLineAsync($"\t{serving.Amount} {serving.Description}");
          }
@@ -271,7 +722,7 @@ public class Program
            Console.Out.WriteLine($"---Page #{++pageCount:0000}---");
            foreach (var food in await queryB.ReadNextAsync())
            {
-        Console.Out.WriteLine($"\t[{food.Id}]\t{food.Description,-20}\t{food.ManufacturerName,-40}");
+        Console.Out.WriteLine($"\t[{food.id}]\t{food.description,-20}\t{food.manufacturerName,-40}");
          }
        }
      }
@@ -290,4 +741,3 @@ public class Program
     ---Page #0017---
         [14644] Beverages, , PEPSICO QUAKER, Gatorade G2, low calorie   Quaker Oats Company - The Gatorade Company,  a unit of Pepsi Co.
     ```
-
