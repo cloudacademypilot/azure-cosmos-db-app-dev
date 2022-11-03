@@ -385,10 +385,11 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
                 FeedResponse<Food> response = await resultSetIterator.ReadNextAsync();
 
                 results.AddRange(response);
-                if (response.Diagnostics != null)
+                foreach (var stroneitem in results)
                 {
-                    Console.WriteLine($"\nQueryWithContinuationTokens Diagnostics: {response.Diagnostics.ToString()}");
-                }
+              await Console.Out.WriteLineAsync($"Read {stroneitem.id} {stroneitem.description} by {stroneitem.manufacturerName}");
+
+                } 
                
                 if (response.Count > 0)
                 {
@@ -439,10 +440,11 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
                 FeedResponse<Food> response = await resultSetIterator.ReadNextAsync();
 
                 results.AddRange(response);
-                if (response.Diagnostics != null)
-                {
-                    Console.WriteLine($"\nQueryWithContinuationTokens Diagnostics: {response.Diagnostics.ToString()}");
-                }
+                foreach (var stroneitem in results)
+               {
+              await Console.Out.WriteLineAsync($"Read {stroneitem.id} {stroneitem.description} by {stroneitem.manufacturerName}");
+
+               } 
     ```
     > Continuation tokens helps you to bookmark for your query's progress. Azure Cosmos DB query executions are stateless at the server side and can be resumed at any time using the continuation token.  
 
@@ -527,11 +529,11 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
                   FeedResponse<Food> response = await resultSetIterator.ReadNextAsync();
 
                   results.AddRange(response);
-                  if (response.Diagnostics != null)
-                  {
-                      Console.WriteLine($"\nQueryWithContinuationTokens Diagnostics: {response.Diagnostics.ToString()}");
-                  }
+                  foreach (var stroneitem in results)
+                 {
+                  await Console.Out.WriteLineAsync($"Read {stroneitem.id} {stroneitem.description} by {stroneitem.manufacturerName}");
 
+                 } 
                   if (response.Count > 0)
                   {
                       continuation = response.ContinuationToken;
