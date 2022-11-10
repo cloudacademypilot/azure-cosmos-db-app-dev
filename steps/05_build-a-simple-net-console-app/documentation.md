@@ -267,11 +267,12 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 
 ## Read single document using queries
 
-1. Find the last line of code you wrote.
+1. Find the line of code.
  
     ```csharp   
     Container container = database.GetContainer(_containerId);
     ```
+    Remove all the lines of code after the above line.
 
 1. Add the following lines of code to use the retrieve a single items from your Cosmos DB by its `id` and `foodGroup`, write its description,manufactureName to the console.
 
@@ -359,11 +360,12 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 
 ## Read multiple documents using queries
 
-1. Find the last line of code you wrote.
+1. Find the line of code.
  
     ```csharp   
     Container container = database.GetContainer(_containerId);
     ```
+    Remove all the lines of code after the above line.
 
 1. Add the following lines of code to retrieve a Multiple items from your Cosmos DB using select query and write its Diagnostics to the console.
 
@@ -568,12 +570,20 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 
 1. Return to `program.cs` file editor window
 
-1. Find the last line of code you wrote:
+1. Find the line of code:
 
     ```csharp
+    Container container = database.GetContainer(_containerId);
+    ```
+    Remove all the lines of code after the above line.
+    
+1. Add the following lines of code to use the `ReadItemAsync()` function to retrieve a single item from your Cosmos DB by its `id` and `foodGroup`, write its description to the console.
+
+    ```csharp
+    ItemResponse<Food> candyResponse = await container.ReadItemAsync<Food>("19130", new PartitionKey("Sweets"));
+    Food candy = candyResponse.Resource;
     Console.Out.WriteLine($"Read {candy.description}");
     ```
-
 1. Create a SQL Query against your data, as follows:
 
     ```csharp
