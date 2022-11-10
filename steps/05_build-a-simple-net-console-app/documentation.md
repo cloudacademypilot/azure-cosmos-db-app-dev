@@ -198,7 +198,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
         await Console.Out.WriteLineAsync($"Existing ETag:\t{candyResponse.ETag}");       
         ItemRequestOptions requestOptions = new ItemRequestOptions { IfMatchEtag = candyResponse.ETag };  
         candy.description = "Candies, HERSHEY'S POT OF GOLD Almond Bar-1";       
-        candyResponse = await container.UpsertItemAsync(candy, requestOptions: requestOptions);    
+        candyResponse = await container.UpsertItemAsync(candy);    
 
     try
     {
@@ -239,7 +239,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
             await Console.Out.WriteLineAsync($"Existing ETag:\t{candyResponse.ETag}");       
             ItemRequestOptions requestOptions = new ItemRequestOptions { IfMatchEtag = candyResponse.ETag };  
             candy.description = "Candies, HERSHEY'S POT OF GOLD Almond Bar-1";       
-            candyResponse = await container.UpsertItemAsync(candy, requestOptions: requestOptions);
+            candyResponse = await container.UpsertItemAsync(candy);
            try
            {
    -       candyResponse = await container.UpsertItemAsync(candy, new PartitionKey(candy.foodGroup));
@@ -373,11 +373,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 
         List<Food> results = new List<Food>();
         using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
-            query,
-            requestOptions: new QueryRequestOptions()
-            {
-                MaxItemCount = 1
-            }))
+            query))
         {
             
             while (resultSetIterator.HasMoreResults)
@@ -404,10 +400,6 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
         }        
         using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
                 query,
-                requestOptions: new QueryRequestOptions()
-                {
-                    MaxItemCount = -1
-                },
                 continuationToken: continuation))
         {
             while (resultSetIterator.HasMoreResults)
@@ -429,11 +421,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
    
    ```csharp
    using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
-            query,
-            requestOptions: new QueryRequestOptions()
-            {
-                MaxItemCount = 1
-            }))
+            query))
         {
      while (resultSetIterator.HasMoreResults)
             {
@@ -470,10 +458,6 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
      ```csharp
     using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
                 query,
-                requestOptions: new QueryRequestOptions()
-                {
-                    MaxItemCount = -1
-                },
                 continuationToken: continuation))
         {
             while (resultSetIterator.HasMoreResults)
@@ -517,11 +501,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 
           List<Food> results = new List<Food>();
           using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
-              query,
-              requestOptions: new QueryRequestOptions()
-              {
-                  MaxItemCount = 1
-              }))
+              query))
           {
 
               while (resultSetIterator.HasMoreResults)
@@ -547,10 +527,6 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
           }        
           using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
                   query,
-                  requestOptions: new QueryRequestOptions()
-                  {
-                      MaxItemCount = -1
-                  },
                   continuationToken: continuation))
           {
               while (resultSetIterator.HasMoreResults)
@@ -609,7 +585,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 1. Add the following code to execute and read the results of this query
 
    ```csharp
-   FeedIterator<Food> queryA = container.GetItemQueryIterator<Food>(new QueryDefinition(sqlA), requestOptions: new QueryRequestOptions{MaxConcurrency = 1});
+   FeedIterator<Food> queryA = container.GetItemQueryIterator<Food>(new QueryDefinition(sqlA));
    foreach (Food food in await queryA.ReadNextAsync())
    {
        await Console.Out.WriteLineAsync($"{food.description} by {food.manufacturerName}");
@@ -654,7 +630,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 3. Add the following line of code after the definition of `sqlB` to create your next item query:
 
     ```csharp
-    FeedIterator<Food> queryB = container.GetItemQueryIterator<Food>(sqlB, requestOptions: new QueryRequestOptions{MaxConcurrency = 5, MaxItemCount = 100});
+    FeedIterator<Food> queryB = container.GetItemQueryIterator<Food>(sqlB);
     ```
 
     > Take note of the differences in this call to `GetItemQueryIterator()` as compared to the previous section. 
@@ -703,7 +679,7 @@ public class Program
          Console.Out.WriteLine($"Read {candy.description}");
 
          string sqlA = "SELECT f.description, f.manufacturerName, f.servings FROM foods f WHERE f.foodGroup = 'Sweets' and IS_DEFINED(f.description) and IS_DEFINED(f.manufacturerName) and IS_DEFINED(f.servings)";
-        FeedIterator<Food> queryA = container.GetItemQueryIterator<Food>(new QueryDefinition(sqlA), requestOptions: new QueryRequestOptions{MaxConcurrency = 1});
+        FeedIterator<Food> queryA = container.GetItemQueryIterator<Food>(new QueryDefinition(sqlA));
          foreach (Food food in await queryA.ReadNextAsync())
          {
          await Console.Out.WriteLineAsync($"{food.description} by {food.manufacturerName}");
@@ -715,7 +691,7 @@ public class Program
          }
 
          string sqlB = @"SELECT f.id, f.description, f.manufacturerName, f.servings FROM foods f WHERE IS_DEFINED(f.manufacturerName)";
-         FeedIterator<Food> queryB = container.GetItemQueryIterator<Food>(sqlB, requestOptions: new QueryRequestOptions{MaxConcurrency = 5, MaxItemCount = 100});
+         FeedIterator<Food> queryB = container.GetItemQueryIterator<Food>(sqlB);
          int pageCount = 0;
          while (queryB.HasMoreResults)
          {
