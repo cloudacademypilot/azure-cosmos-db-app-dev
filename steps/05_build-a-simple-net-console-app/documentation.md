@@ -102,16 +102,16 @@ After using the Azure Portal's **Data Explorer** to query an Azure Cosmos DB con
     
 10. For the `_endpointUri` variable, replace the placeholder value with the **URI** value and for the `_primaryKey` variable, replace the placeholder value with the **PRIMARY KEY** value from your Azure Cosmos DB account. Use [these instructions](https://github.com/CSALabsAutomation/azure-cosmosdb-lab/blob/main/steps/01_creating-a-partitioned-container/documentation.md) to get these values if you do not already have them:
 
-    - For example, if your **uri** is `https://cosmosacct.documents.azure.com:443/`, your new variable assignment will look like this:
+    - For example, if your **uri** is `https:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`, your new variable assignment will look like this:
 
     ```csharp
-    private static readonly string _endpointUri = "https://cosmosacct.documents.azure.com:443/";
+    private static readonly string _endpointUri = "https:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
     ```
 
-    - For example, if your **primary key** is `elzirrKCnXlacvh1CRAnQdYVbVLspmYHQyYrhx0PltHi8wn5lHVHFnd1Xm3ad5cn4TUcH4U0MSeHsVykkFPHpQ==`, your new variable assignment will look like this:
+    - For example, if your **primary key** is `xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`, your new variable assignment will look like this:
 
     ```csharp
-    private static readonly string _primaryKey = "elzirrKCnXlacvh1CRAnQdYVbVLspmYHQyYrhx0PltHi8wn5lHVHFnd1Xm3ad5cn4TUcH4U0MSeHsVykkFPHpQ==";
+    private static readonly string _primaryKey = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
     ```
 
 ## Point reads, writes and queries
@@ -198,7 +198,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
         await Console.Out.WriteLineAsync($"Existing ETag:\t{candyResponse.ETag}");       
         ItemRequestOptions requestOptions = new ItemRequestOptions { IfMatchEtag = candyResponse.ETag };  
         candy.description = "Candies, HERSHEY'S POT OF GOLD Almond Bar-1";       
-        candyResponse = await container.UpsertItemAsync(candy, requestOptions: requestOptions);    
+        candyResponse = await container.UpsertItemAsync(candy);    
 
     try
     {
@@ -239,7 +239,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
             await Console.Out.WriteLineAsync($"Existing ETag:\t{candyResponse.ETag}");       
             ItemRequestOptions requestOptions = new ItemRequestOptions { IfMatchEtag = candyResponse.ETag };  
             candy.description = "Candies, HERSHEY'S POT OF GOLD Almond Bar-1";       
-            candyResponse = await container.UpsertItemAsync(candy, requestOptions: requestOptions);
+            candyResponse = await container.UpsertItemAsync(candy);
            try
            {
    -       candyResponse = await container.UpsertItemAsync(candy, new PartitionKey(candy.foodGroup));
@@ -267,11 +267,12 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 
 ## Read single document using queries
 
-1. Find the last line of code you wrote.
+1. Find the line of code.
  
     ```csharp   
     Container container = database.GetContainer(_containerId);
     ```
+    Remove all the lines of code after the above line.
 
 1. Add the following lines of code to use the retrieve a single items from your Cosmos DB by its `id` and `foodGroup`, write its description,manufactureName to the console.
 
@@ -359,11 +360,12 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 
 ## Read multiple documents using queries
 
-1. Find the last line of code you wrote.
+1. Find the line of code.
  
     ```csharp   
     Container container = database.GetContainer(_containerId);
     ```
+    Remove all the lines of code after the above line.
 
 1. Add the following lines of code to retrieve a Multiple items from your Cosmos DB using select query and write its Diagnostics to the console.
 
@@ -373,11 +375,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 
         List<Food> results = new List<Food>();
         using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
-            query,
-            requestOptions: new QueryRequestOptions()
-            {
-                MaxItemCount = 1
-            }))
+            query))
         {
             
             while (resultSetIterator.HasMoreResults)
@@ -404,10 +402,6 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
         }        
         using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
                 query,
-                requestOptions: new QueryRequestOptions()
-                {
-                    MaxItemCount = -1
-                },
                 continuationToken: continuation))
         {
             while (resultSetIterator.HasMoreResults)
@@ -429,11 +423,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
    
    ```csharp
    using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
-            query,
-            requestOptions: new QueryRequestOptions()
-            {
-                MaxItemCount = 1
-            }))
+            query))
         {
      while (resultSetIterator.HasMoreResults)
             {
@@ -470,10 +460,6 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
      ```csharp
     using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
                 query,
-                requestOptions: new QueryRequestOptions()
-                {
-                    MaxItemCount = -1
-                },
                 continuationToken: continuation))
         {
             while (resultSetIterator.HasMoreResults)
@@ -517,11 +503,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 
           List<Food> results = new List<Food>();
           using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
-              query,
-              requestOptions: new QueryRequestOptions()
-              {
-                  MaxItemCount = 1
-              }))
+              query))
           {
 
               while (resultSetIterator.HasMoreResults)
@@ -547,10 +529,6 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
           }        
           using (FeedIterator<Food> resultSetIterator = container.GetItemQueryIterator<Food>(
                   query,
-                  requestOptions: new QueryRequestOptions()
-                  {
-                      MaxItemCount = -1
-                  },
                   continuationToken: continuation))
           {
               while (resultSetIterator.HasMoreResults)
@@ -592,12 +570,20 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 
 1. Return to `program.cs` file editor window
 
-1. Find the last line of code you wrote:
+1. Find the line of code:
 
     ```csharp
+    Container container = database.GetContainer(_containerId);
+    ```
+    Remove all the lines of code after the above line.
+    
+1. Add the following lines of code to use the `ReadItemAsync()` function to retrieve a single item from your Cosmos DB by its `id` and `foodGroup`, write its description to the console.
+
+    ```csharp
+    ItemResponse<Food> candyResponse = await container.ReadItemAsync<Food>("19130", new PartitionKey("Sweets"));
+    Food candy = candyResponse.Resource;
     Console.Out.WriteLine($"Read {candy.description}");
     ```
-
 1. Create a SQL Query against your data, as follows:
 
     ```csharp
@@ -609,7 +595,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 1. Add the following code to execute and read the results of this query
 
    ```csharp
-   FeedIterator<Food> queryA = container.GetItemQueryIterator<Food>(new QueryDefinition(sqlA), requestOptions: new QueryRequestOptions{MaxConcurrency = 1});
+   FeedIterator<Food> queryA = container.GetItemQueryIterator<Food>(new QueryDefinition(sqlA));
    foreach (Food food in await queryA.ReadNextAsync())
    {
        await Console.Out.WriteLineAsync($"{food.description} by {food.manufacturerName}");
@@ -654,7 +640,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
 3. Add the following line of code after the definition of `sqlB` to create your next item query:
 
     ```csharp
-    FeedIterator<Food> queryB = container.GetItemQueryIterator<Food>(sqlB, requestOptions: new QueryRequestOptions{MaxConcurrency = 5, MaxItemCount = 100});
+    FeedIterator<Food> queryB = container.GetItemQueryIterator<Food>(sqlB);
     ```
 
     > Take note of the differences in this call to `GetItemQueryIterator()` as compared to the previous section. 
@@ -703,7 +689,7 @@ public class Program
          Console.Out.WriteLine($"Read {candy.description}");
 
          string sqlA = "SELECT f.description, f.manufacturerName, f.servings FROM foods f WHERE f.foodGroup = 'Sweets' and IS_DEFINED(f.description) and IS_DEFINED(f.manufacturerName) and IS_DEFINED(f.servings)";
-        FeedIterator<Food> queryA = container.GetItemQueryIterator<Food>(new QueryDefinition(sqlA), requestOptions: new QueryRequestOptions{MaxConcurrency = 1});
+        FeedIterator<Food> queryA = container.GetItemQueryIterator<Food>(new QueryDefinition(sqlA));
          foreach (Food food in await queryA.ReadNextAsync())
          {
          await Console.Out.WriteLineAsync($"{food.description} by {food.manufacturerName}");
@@ -715,7 +701,7 @@ public class Program
          }
 
          string sqlB = @"SELECT f.id, f.description, f.manufacturerName, f.servings FROM foods f WHERE IS_DEFINED(f.manufacturerName)";
-         FeedIterator<Food> queryB = container.GetItemQueryIterator<Food>(sqlB, requestOptions: new QueryRequestOptions{MaxConcurrency = 5, MaxItemCount = 100});
+         FeedIterator<Food> queryB = container.GetItemQueryIterator<Food>(sqlB);
          int pageCount = 0;
          while (queryB.HasMoreResults)
          {
