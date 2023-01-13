@@ -272,6 +272,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
     ```csharp   
     Container container = database.GetContainer(_containerId);
     ```
+
     Remove all the lines of code after the above line.
 
 1. Add the following lines of code to use the retrieve a single items from your Cosmos DB by its `id` and `foodGroup`, write its description,manufactureName to the console.
@@ -575,6 +576,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
     ```csharp
     Container container = database.GetContainer(_containerId);
     ```
+
     Remove all the lines of code after the above line.
     
 1. Add the following lines of code to use the `ReadItemAsync()` function to retrieve a single item from your Cosmos DB by its `id` and `foodGroup`, write its description to the console.
@@ -584,6 +586,7 @@ UpsertItemAsync allows a single item to be write from Cosmos DB by its ID. In Az
     Food candy = candyResponse.Resource;
     Console.Out.WriteLine($"Read {candy.description}");
     ```
+
 1. Create a SQL Query against your data, as follows:
 
     ```csharp
